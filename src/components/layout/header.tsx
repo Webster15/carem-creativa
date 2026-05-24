@@ -45,7 +45,7 @@ export function Header() {
           href="/"
           className="font-display text-brand text-2xl tracking-tight uppercase"
         >
-          Estudio
+          CaremCreativa
         </Link>
 
         <nav className="hidden md:flex items-center gap-7">
