@@ -138,7 +138,7 @@ export function Hero() {
           animate={{ opacity: 1, y: "0.09em" }}
           transition={{ duration: 0.75, ease: "easeOut", delay: 0.08 }}
           className="font-display text-brand leading-[0.86] uppercase select-none px-4 sm:px-6"
-          style={{ fontSize: "clamp(5rem, 22vw, 28rem)", lineHeight: 0.86 }}
+          style={{ fontSize: "clamp(5rem, 24vw, 28rem)", lineHeight: 0.86 }}
         >
           <span className="block">DISEÑO</span>
           <span className="block">QUE SE NOTA</span>
