@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-cream: #FDF1D7;
+  --color-brand: #3D6EEE;
+  --color-accent: #F75D45;
+  --color-vivid: #9C70F7;
+  --color-dark: #111111;
+  --font-sans: var(--font-poppins);
+  --font-display: var(--font-barlow);
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: #FDF1D7;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-25%); }
+}
+
+.animate-ticker {
+  animation: ticker 28s linear infinite;
+}
