@@ -166,7 +166,7 @@ const TYPES = [
 
 function ProjectTypes() {
   return (
-    <section className="bg-dark w-full">
+    <section id="tipos" className="scroll-mt-16 bg-dark w-full">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-28">
         <motion.div
           initial="hidden"
@@ -327,7 +327,7 @@ const EXTRAS = [
 
 function Deliverables() {
   return (
-    <section className="bg-cream w-full">
+    <section id="que-incluye" className="scroll-mt-16 bg-cream w-full">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-28">
         <motion.div
           initial="hidden"
@@ -671,7 +671,7 @@ const PLANS = [
 
 function Pricing() {
   return (
-    <section className="bg-cream w-full">
+    <section id="precios" className="scroll-mt-16 bg-cream w-full">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-28">
         <motion.div
           initial="hidden"
@@ -846,7 +846,7 @@ function FAQ() {
   const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <section className="bg-cream w-full">
+    <section id="faq" className="scroll-mt-16 bg-cream w-full">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-28">
         <motion.div
           initial="hidden"

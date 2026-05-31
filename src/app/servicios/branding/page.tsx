@@ -579,7 +579,6 @@ export default function BrandingPage() {
             whileInView="visible"
             viewport={vp}
             variants={stagger()}
-            className="text-center"
           >
             <motion.p
               variants={fadeUp}
@@ -587,44 +586,123 @@ export default function BrandingPage() {
             >
               Inversión
             </motion.p>
+            <motion.h2
+              variants={fadeUp}
+              className="font-display text-cream leading-[0.88] uppercase mt-2"
+              style={{ fontSize: "clamp(2.8rem, 9vw, 7rem)" }}
+            >
+              PLANES <span className="text-accent">DESDE</span>
+            </motion.h2>
             <motion.p
               variants={fadeUp}
-              className="text-cream/30 font-semibold text-sm uppercase tracking-widest mt-6"
+              className="mt-4 text-cream/40 text-sm max-w-lg leading-relaxed"
             >
-              Desde
+              Pago en etapas disponible. Cotización exacta sin costo ni compromiso.
             </motion.p>
-            <motion.p
-              variants={fadeUp}
-              className="font-display text-cream uppercase leading-none"
-              style={{ fontSize: "clamp(4rem, 16vw, 14rem)" }}
-            >
-              $500
-            </motion.p>
-            <motion.p
-              variants={fadeUp}
-              className="text-cream/30 text-sm uppercase tracking-widest -mt-1"
-            >
-              USD · Pago en etapas disponible
-            </motion.p>
+          </motion.div>
 
-            <motion.div variants={fadeUp} className="mt-10">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={vp}
+            variants={stagger(0.12)}
+            className="mt-12 grid md:grid-cols-2 gap-4"
+          >
+            {/* Plan Básico */}
+            <motion.div
+              variants={fadeUp}
+              className="border-2 border-cream/20 p-8 flex flex-col gap-6 hover:border-cream/40 transition-colors"
+            >
+              <div>
+                <p className="text-cream/40 text-xs uppercase tracking-[0.25em] font-semibold">Branding</p>
+                <p className="font-display text-cream text-2xl uppercase mt-1 leading-none">Básico</p>
+              </div>
+              <div>
+                <p className="font-display text-accent leading-none uppercase" style={{ fontSize: "clamp(2.5rem, 7vw, 5rem)" }}>
+                  $500
+                </p>
+                <p className="text-cream/30 text-xs uppercase tracking-widest mt-1">USD · precio fijo</p>
+              </div>
+              <ul className="space-y-2.5 flex-1">
+                {[
+                  "Logo principal + variantes (horizontal, isotipo)",
+                  "Paleta de color primaria y secundaria",
+                  "Sistema tipográfico (2 familias)",
+                  "Mini guía de uso (10 págs.)",
+                  "Archivos vectoriales AI, SVG y PNG",
+                  "2 rondas de ajustes incluidas",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2.5">
+                    <div className="h-4 w-4 bg-accent flex items-center justify-center shrink-0 mt-0.5">
+                      <Check className="h-2.5 w-2.5 text-dark" />
+                    </div>
+                    <span className="text-cream/65 text-sm leading-snug">{item}</span>
+                  </li>
+                ))}
+              </ul>
               <Link
                 href="#contactar"
-                className="inline-flex items-center gap-2 bg-accent text-cream font-display text-sm px-8 py-4 tracking-[0.12em] uppercase hover:bg-cream hover:text-dark transition-colors"
+                className="flex items-center justify-center gap-2 border-2 border-cream/30 text-cream font-display text-xs px-6 py-3 tracking-[0.15em] uppercase hover:bg-cream hover:text-dark transition-colors"
               >
-                Solicitar cotización exacta
-                <ArrowRight className="h-4 w-4" />
+                Cotizar básico <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </motion.div>
 
-            <motion.p
+            {/* Plan Completo */}
+            <motion.div
               variants={fadeUp}
-              className="mt-6 text-cream/20 text-xs max-w-md mx-auto leading-relaxed"
+              className="border-2 border-accent p-8 flex flex-col gap-6 relative"
             >
-              El costo final depende del alcance y número de aplicaciones.
-              Siempre cotizamos antes de comenzar — sin compromisos.
-            </motion.p>
+              <div className="absolute -top-px left-0 right-0 bg-accent py-1.5 text-center">
+                <p className="text-dark text-xs font-semibold uppercase tracking-[0.2em]">Más completo</p>
+              </div>
+              <div className="mt-5">
+                <p className="text-cream/40 text-xs uppercase tracking-[0.25em] font-semibold">Branding</p>
+                <p className="font-display text-cream text-2xl uppercase mt-1 leading-none">Completo</p>
+              </div>
+              <div>
+                <p className="font-display text-accent leading-none uppercase" style={{ fontSize: "clamp(2rem, 5.5vw, 4rem)" }}>
+                  $700–$2.000
+                </p>
+                <p className="text-cream/30 text-xs uppercase tracking-widest mt-1">USD · según alcance del proyecto</p>
+              </div>
+              <ul className="space-y-2.5 flex-1">
+                {[
+                  "Todo lo del plan Básico",
+                  "Estrategia y posicionamiento de marca",
+                  "Naming (si se requiere)",
+                  "Brandbook completo en PDF y Figma",
+                  "Aplicaciones clave: tarjetas, papelería, firma",
+                  "Plantillas para redes sociales",
+                  "Mockups de presentación de alta calidad",
+                  "Transferencia total de derechos",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2.5">
+                    <div className="h-4 w-4 bg-accent flex items-center justify-center shrink-0 mt-0.5">
+                      <Check className="h-2.5 w-2.5 text-dark" />
+                    </div>
+                    <span className="text-cream/65 text-sm leading-snug">{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="#contactar"
+                className="flex items-center justify-center gap-2 bg-accent text-dark font-display text-xs px-6 py-3 tracking-[0.15em] uppercase hover:bg-cream transition-colors"
+              >
+                Solicitar cotización <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </motion.div>
           </motion.div>
+
+          <motion.p
+            initial="hidden"
+            whileInView="visible"
+            viewport={vp}
+            variants={fadeUp}
+            className="mt-6 text-cream/20 text-xs text-center leading-relaxed"
+          >
+            El precio del plan Completo varía según la cantidad de aplicaciones, complejidad del proyecto y necesidades específicas de la marca.
+          </motion.p>
         </div>
       </section>
 

@@ -26,8 +26,7 @@ export function DialogContent({
         {...props}
         className={cn(
           "fixed left-1/2 top-1/2 z-50 w-[92vw] max-w-lg -translate-x-1/2 -translate-y-1/2",
-          "rounded-2xl bg-white p-6 shadow-2xl outline-none",
-          "dark:bg-neutral-950",
+          "bg-cream text-dark p-6 shadow-2xl outline-none",
           "max-h-[85vh] overflow-y-auto",
           className
         )}
@@ -35,7 +34,7 @@ export function DialogContent({
         {children}
         <DialogPrimitive.Close
           aria-label="Cerrar"
-          className="absolute right-4 top-4 rounded-full p-1 opacity-60 hover:opacity-100 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+          className="absolute right-4 top-4 rounded-full p-1 opacity-60 hover:opacity-100 hover:bg-dark/10"
         >
           <X className="h-4 w-4" />
         </DialogPrimitive.Close>
@@ -66,7 +65,7 @@ export const DialogDescription = ({
   ...props
 }: React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>) => (
   <DialogPrimitive.Description
-    className={cn("text-sm text-neutral-600 dark:text-neutral-400", className)}
+    className={cn("text-sm text-dark/60", className)}
     {...props}
   />
 );

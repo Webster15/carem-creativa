@@ -217,7 +217,7 @@ const DELIVERABLES = [
 
 function Deliverables() {
   return (
-    <section className="bg-brand w-full">
+    <section id="entregables" className="scroll-mt-16 bg-brand w-full">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-28">
         <motion.div
           initial="hidden"
@@ -277,7 +277,7 @@ const STEPS = [
 
 function Process() {
   return (
-    <section className="bg-cream w-full">
+    <section id="proceso" className="scroll-mt-16 bg-cream w-full">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-28">
         <motion.div
           initial="hidden"
@@ -397,7 +397,7 @@ function WhyUs() {
 
 function Pricing() {
   return (
-    <section className="bg-dark w-full">
+    <section id="inversion" className="scroll-mt-16 bg-dark w-full">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-28">
         <motion.div
           className="grid md:grid-cols-2 gap-12 items-center"
@@ -460,7 +460,7 @@ function FAQ() {
   const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <section className="bg-cream w-full">
+    <section id="faq" className="scroll-mt-16 bg-cream w-full">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-28">
         <motion.div
           initial="hidden"

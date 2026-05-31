@@ -7,17 +7,26 @@ import { ClientTools } from "./client-tools";
 import { FloatingButton } from "./floating-button";
 import { StatusPill } from "./status-pill";
 
+// Callbacks definidos a nivel de módulo → referencia estable.
+// Esto evita que la conexión WebSocket se reinicie cuando el provider
+// se re-renderiza al navegar entre páginas (lo que cortaba al agente).
+function handleConnect({ conversationId }: { conversationId: string }) {
+  console.log("[agent] connected", conversationId);
+}
+function handleDisconnect() {
+  console.log("[agent] disconnected");
+}
+function handleError(message: string, context?: unknown) {
+  console.error("[agent] error", message, context);
+}
+
 export function VoiceAgentProvider({ children }: { children: React.ReactNode }) {
   return (
     <AgentUIContextProvider>
       <ConversationProvider
-        onConnect={({ conversationId }) =>
-          console.log("[agent] connected", conversationId)
-        }
-        onDisconnect={() => console.log("[agent] disconnected")}
-        onError={(message, context) =>
-          console.error("[agent] error", message, context)
-        }
+        onConnect={handleConnect}
+        onDisconnect={handleDisconnect}
+        onError={handleError}
       >
         <ClientTools />
         {children}

@@ -1,0 +1,10 @@
+{
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "caremcreativa.com" }],
+      "destination": "https://www.caremcreativa.com/:path*",
+      "permanent": true
+    }
+  ]
+}

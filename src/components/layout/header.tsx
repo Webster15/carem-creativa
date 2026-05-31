@@ -12,12 +12,26 @@ const NAV = [
   { href: "/#contacto", label: "Contacto" },
 ];
 
+const COURSES_NAV = [
+  { href: "/cursos/illustrator", label: "Adobe Illustrator" },
+];
+
 const SERVICE_PAGES = SERVICES.filter((s) => s.pageUrl);
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const [openCourses, setOpenCourses] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const coursesRef = useRef<HTMLDivElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const closeCoursesTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function scheduleCloseCourses() {
+    closeCoursesTimer.current = setTimeout(() => setOpenCourses(false), 220);
+  }
+  function cancelCloseCourses() {
+    if (closeCoursesTimer.current) clearTimeout(closeCoursesTimer.current);
+  }
 
   function scheduleClose() {
     closeTimer.current = setTimeout(() => setOpen(false), 220);
@@ -32,6 +46,16 @@ export function Header() {
     function onClickOutside(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, []);
+
+  useEffect(() => {
+    function onClickOutside(e: MouseEvent) {
+      if (coursesRef.current && !coursesRef.current.contains(e.target as Node)) {
+        setOpenCourses(false);
       }
     }
     document.addEventListener("mousedown", onClickOutside);
@@ -87,6 +111,43 @@ export function Header() {
                     >
                       <svc.icon className="h-4 w-4 text-brand group-hover/item:text-cream transition-colors shrink-0" />
                       <span className="font-medium">{svc.title}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Cursos dropdown */}
+          <div
+            ref={coursesRef}
+            className="relative"
+            onMouseLeave={scheduleCloseCourses}
+            onMouseEnter={cancelCloseCourses}
+          >
+            <button
+              type="button"
+              onClick={() => setOpenCourses((v) => !v)}
+              className="flex items-center gap-1 text-sm font-medium text-accent hover:text-brand transition-colors"
+            >
+              Cursos
+              <ChevronDown
+                className={`h-3.5 w-3.5 opacity-70 transition-transform duration-200 ${openCourses ? "rotate-180 opacity-100" : ""}`}
+              />
+            </button>
+
+            {openCourses && (
+              <div className="absolute top-full left-0 mt-2 z-50">
+                <div className="bg-cream border-2 border-accent shadow-xl py-1 min-w-[210px]">
+                  {COURSES_NAV.map((course) => (
+                    <Link
+                      key={course.href}
+                      href={course.href}
+                      onClick={() => setOpenCourses(false)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-dark hover:bg-accent hover:text-cream transition-colors"
+                    >
+                      <span className="text-accent text-base leading-none hover:text-cream">🎨</span>
+                      <span className="font-medium">{course.label}</span>
                     </Link>
                   ))}
                 </div>

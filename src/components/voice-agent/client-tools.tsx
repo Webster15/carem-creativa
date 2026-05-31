@@ -15,6 +15,8 @@ function scrollToId(id: string) {
   if (typeof document === "undefined") return false;
   const el = document.getElementById(id);
   if (!el) return false;
+  // scrollIntoView con block:"start" respeta el scroll-mt-16 de CSS
+  // y funciona de forma nativa en todos los navegadores incluyendo Safari iOS
   el.scrollIntoView({ behavior: "smooth", block: "start" });
   return true;
 }
@@ -39,20 +41,32 @@ export function ClientTools() {
   useConversationClientTool("mostrarServicio", (params) => {
     const serviceId = params.serviceId;
     const abrirDetalle = Boolean(params.abrirDetalle);
+    const seccion = typeof params.seccion === "string" ? params.seccion.trim() : "";
     if (!isServiceId(serviceId)) {
       return `No conozco ese servicio. Disponibles: ${SERVICE_IDS.join(", ")}.`;
     }
     const svc = getService(serviceId)!;
     actions.highlightService(serviceId);
+    if (abrirDetalle && svc.pageUrl) {
+      // Navegar a la página del servicio, opcionalmente a una sección
+      const target = seccion ? `${svc.pageUrl}#${seccion}` : svc.pageUrl;
+      // Delay para que ElevenLabs procese el tool call antes de navegar
+      setTimeout(() => router.push(target), 300);
+      return `Abriendo página de ${svc.title}${seccion ? `, sección ${seccion}` : ""}.`;
+    }
     const ok = scrollToId(`servicio-${svc.slug}`);
     if (!ok) scrollToId("servicios");
-    if (abrirDetalle) actions.openService(serviceId);
     return `Mostrando ${svc.title}.`;
   });
 
   useConversationClientTool("resaltarSeccion", (params) => {
-    const sectionId = params.sectionId;
-    if (!isSectionId(sectionId)) return "Sección desconocida.";
+    const sectionId = typeof params.sectionId === "string" ? params.sectionId.trim() : "";
+    if (!sectionId) return "Sección desconocida.";
+    // Si es una ruta URL (empieza con "/"), navegar a esa página
+    if (sectionId.startsWith("/")) {
+      setTimeout(() => router.push(sectionId), 300);
+      return `Navegando a ${sectionId}.`;
+    }
     scrollToId(sectionId);
     return `Yendo a ${sectionId}.`;
   });
@@ -71,7 +85,7 @@ export function ClientTools() {
       if (seccion) scrollToId(seccion);
       return `Mostrando ${seccion || slug}.`;
     }
-    router.push(`${targetPath}${seccion ? `#${seccion}` : ""}`);
+    setTimeout(() => router.push(`${targetPath}${seccion ? `#${seccion}` : ""}`), 300);
     return `Abriendo página de ${slug}.`;
   });
 

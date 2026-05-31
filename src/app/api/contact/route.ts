@@ -7,7 +7,9 @@ const Body = z.object({
   mensaje: z.string().min(10).max(2000),
 });
 
-export const runtime = "nodejs";
+const WEB3FORMS_KEY = "bdc03151-b165-410b-b5dc-2816d223bc05";
+
+export const runtime = "edge";
 
 export async function POST(req: Request) {
   let json: unknown;
@@ -25,8 +27,32 @@ export async function POST(req: Request) {
     );
   }
 
-  // MVP: log it. Replace with Resend / Slack / DB in milestone 2.
-  console.log("[contact]", parsed.data);
+  const { nombre, email, mensaje } = parsed.data;
+
+  try {
+    const res = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        access_key: WEB3FORMS_KEY,
+        subject: "Nuevo cliente interesado de la web",
+        email,
+        "Nombre": nombre,
+        "Correo": email,
+        "Mensaje": mensaje,
+        from_name: "CaremCreativa Web",
+      }),
+    });
+
+    const data = await res.json();
+    if (!data.success) {
+      console.error("[contact] web3forms error", data);
+      return NextResponse.json({ error: "Error al enviar." }, { status: 502 });
+    }
+  } catch (err) {
+    console.error("[contact] fetch error", err);
+    return NextResponse.json({ error: "Error de red." }, { status: 502 });
+  }
 
   return NextResponse.json({ ok: true });
 }
