@@ -4,9 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import { VoiceAgentProvider } from "@/components/voice-agent/provider";
 import { ServiceDetailDialog } from "@/components/sections/service-detail-dialog";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
-import { ChatWidget } from "@/components/chatbot/chat-widget";
+import { SiteChrome } from "@/components/layout/site-chrome";
 
 const barlowCondensed = Barlow_Condensed({
   variable: "--font-barlow",
@@ -146,11 +144,8 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-cream text-dark font-sans">
         <VoiceAgentProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <SiteChrome>{children}</SiteChrome>
           <ServiceDetailDialog />
-          <ChatWidget />
         </VoiceAgentProvider>
       </body>
     </html>

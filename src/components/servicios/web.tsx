@@ -9,6 +9,7 @@ import {
   Layout, Users, MessageCircle, CalendarCheck,
 } from "lucide-react";
 import Link from "next/link";
+import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 28 },
@@ -44,12 +45,10 @@ function Hero() {
             Rápidas, optimizadas, autoadministrables y pensadas para crecer contigo.
           </motion.p>
           <motion.div variants={fadeUp} className="mt-8 flex flex-wrap items-center gap-3">
-            <Link
-              href="/#contacto"
-              className="inline-flex items-center gap-2 bg-dark text-cream font-display text-xs px-6 py-3 tracking-[0.12em] uppercase hover:bg-brand transition-colors"
-            >
-              Quiero mi página web <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
+            <WhatsAppButton
+              message="Hola 👋 Quiero información sobre el diseño de mi página web."
+              label="Quiero mi página web"
+            />
             <Link
               href="#proceso"
               className="inline-flex items-center gap-2 border-2 border-dark/30 text-dark font-display text-xs px-6 py-3 tracking-[0.12em] uppercase hover:border-dark transition-colors"
@@ -921,17 +920,16 @@ function FinalCTA() {
             Agenda una llamada gratuita de 30 minutos. Analizamos tu proyecto y armamos juntos la mejor solución.
           </motion.p>
           <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-3">
-            <Link
-              href="/#contacto"
-              className="inline-flex items-center gap-2 bg-dark text-cream font-display text-sm px-8 py-4 tracking-[0.15em] uppercase hover:bg-brand transition-colors"
-            >
-              <CalendarCheck className="h-4 w-4" /> Agendar consultoría gratuita
-            </Link>
+            <WhatsAppButton
+              message="Hola 👋 Quiero información sobre el diseño de mi página web."
+              label="Escríbenos por WhatsApp"
+              className="px-8 py-4 text-sm tracking-[0.15em]"
+            />
             <Link
               href="/#contacto"
               className="inline-flex items-center gap-2 border-2 border-dark/30 text-dark font-display text-sm px-8 py-4 tracking-[0.15em] uppercase hover:border-dark transition-colors"
             >
-              <MessageCircle className="h-4 w-4" /> Escribirnos por WhatsApp
+              <CalendarCheck className="h-4 w-4" /> Agendar por correo
             </Link>
           </motion.div>
         </motion.div>

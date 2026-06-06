@@ -9,6 +9,7 @@ import {
   ClipboardList, Inbox, Eye, PackageCheck, Clock,
 } from "lucide-react";
 import Link from "next/link";
+import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 28 },
@@ -44,12 +45,10 @@ function Hero() {
             para que tu contenido destaque, conecte y refleje el nivel real de tu negocio.
           </motion.p>
           <motion.div variants={fadeUp} className="mt-8 flex flex-wrap items-center gap-3">
-            <Link
-              href="/#contacto"
-              className="inline-flex items-center gap-2 bg-accent text-cream font-display text-xs px-6 py-3 tracking-[0.12em] uppercase hover:bg-cream hover:text-brand transition-colors"
-            >
-              Quiero piezas profesionales <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
+            <WhatsAppButton
+              message="Hola 👋 Quiero información sobre el diseño para mis redes sociales."
+              label="Quiero piezas profesionales"
+            />
             <Link
               href="#modalidades"
               className="inline-flex items-center gap-2 border-2 border-cream/30 text-cream font-display text-xs px-6 py-3 tracking-[0.12em] uppercase hover:border-cream transition-colors"
@@ -564,12 +563,11 @@ function Pricing() {
               <p>Entrega en 2–5 días hábiles por pieza</p>
               <p>Cotización personalizada sin costo</p>
             </div>
-            <Link
-              href="/#contacto"
-              className="mt-8 flex items-center justify-center gap-2 w-full bg-accent text-cream font-display text-xs px-6 py-4 tracking-[0.15em] uppercase hover:bg-vivid transition-colors"
-            >
-              Solicitar cotización <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
+            <WhatsAppButton
+              message="Hola 👋 Quiero una cotización para el diseño de mis redes sociales."
+              label="Solicitar cotización"
+              className="mt-8 w-full justify-center px-6 py-4 tracking-[0.15em]"
+            />
           </motion.div>
         </motion.div>
       </div>
@@ -669,12 +667,11 @@ function FinalCTA() {
             Cuéntanos qué necesitas y armemos juntos el plan ideal para tu marca.
           </motion.p>
           <motion.div variants={fadeUp}>
-            <Link
-              href="/#contacto"
-              className="inline-flex items-center gap-2 bg-accent text-cream font-display text-sm px-8 py-4 tracking-[0.15em] uppercase hover:bg-vivid transition-colors"
-            >
-              Solicitar mi cotización <ArrowRight className="h-4 w-4" />
-            </Link>
+            <WhatsAppButton
+              message="Hola 👋 Quiero una cotización para el diseño de mis redes sociales."
+              label="Solicitar mi cotización"
+              className="px-8 py-4 text-sm tracking-[0.15em]"
+            />
           </motion.div>
         </motion.div>
       </div>

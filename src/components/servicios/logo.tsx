@@ -7,6 +7,7 @@ import {
   Sparkles, BookOpen, FolderOpen, Clock,
 } from "lucide-react";
 import Link from "next/link";
+import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 28 },
@@ -41,12 +42,10 @@ function Hero() {
             esencia de tu negocio y te diferencian a primera vista.
           </motion.p>
           <motion.div variants={fadeUp} className="mt-8 flex flex-wrap items-center gap-3">
-            <Link
-              href="/#contacto"
-              className="inline-flex items-center gap-2 bg-accent text-cream font-display text-xs px-6 py-3 tracking-[0.12em] uppercase hover:bg-cream hover:text-brand transition-colors"
-            >
-              Quiero mi logo <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
+            <WhatsAppButton
+              message="Hola 👋 Quiero información sobre el diseño de mi logo."
+              label="Quiero mi logo"
+            />
             <Link
               href="/#portafolio"
               className="inline-flex items-center gap-2 border-2 border-cream/30 text-cream font-display text-xs px-6 py-3 tracking-[0.12em] uppercase hover:border-cream transition-colors"
@@ -432,12 +431,11 @@ function Pricing() {
               <p>Plazo estimado: 7 a 10 días hábiles</p>
               <p>Planes de pago disponibles</p>
             </div>
-            <Link
-              href="/#contacto"
-              className="mt-8 flex items-center justify-center gap-2 w-full bg-accent text-cream font-display text-xs px-6 py-4 tracking-[0.15em] uppercase hover:bg-cream hover:text-brand transition-colors"
-            >
-              Solicitar cotización <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
+            <WhatsAppButton
+              message="Hola 👋 Quiero solicitar una cotización para el diseño de mi logo."
+              label="Solicitar cotización"
+              className="mt-8 w-full justify-center px-6 py-4 tracking-[0.15em]"
+            />
           </motion.div>
         </motion.div>
       </div>
@@ -534,12 +532,11 @@ function FinalCTA() {
             Cuéntanos sobre tu proyecto y empecemos a darle forma a tu marca.
           </motion.p>
           <motion.div variants={fadeUp}>
-            <Link
-              href="/#contacto"
-              className="inline-flex items-center gap-2 bg-accent text-cream font-display text-sm px-8 py-4 tracking-[0.15em] uppercase hover:bg-cream hover:text-brand transition-colors"
-            >
-              Empezar mi logo <ArrowRight className="h-4 w-4" />
-            </Link>
+            <WhatsAppButton
+              message="Hola 👋 Quiero empezar el diseño de mi logo."
+              label="Empezar mi logo"
+              className="px-8 py-4 text-sm tracking-[0.15em]"
+            />
           </motion.div>
         </motion.div>
       </div>

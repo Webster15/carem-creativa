@@ -13,6 +13,7 @@ import {
   Mail,
 } from "lucide-react";
 import Link from "next/link";
+import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 
 /* ─── animation helpers ─────────────────────────────────── */
 
@@ -174,13 +175,11 @@ export default function BrandingPage() {
               variants={fadeUp}
               className="mt-10 flex flex-wrap gap-3"
             >
-              <Link
-                href="#contactar"
-                className="inline-flex items-center gap-2 bg-accent text-cream font-display text-sm px-7 py-3 tracking-[0.12em] uppercase hover:bg-cream hover:text-dark transition-colors"
-              >
-                Cotizar branding
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+              <WhatsAppButton
+                message="Hola 👋 Quiero información sobre el branding de mi marca."
+                label="Cotizar branding"
+                className="px-7 py-3 text-sm"
+              />
               <Link
                 href="#proceso"
                 className="inline-flex items-center gap-2 border-2 border-cream/40 text-cream font-display text-sm px-7 py-3 tracking-[0.12em] uppercase hover:border-cream transition-colors"
@@ -640,12 +639,12 @@ export default function BrandingPage() {
                   </li>
                 ))}
               </ul>
-              <Link
-                href="#contactar"
-                className="flex items-center justify-center gap-2 border-2 border-cream/30 text-cream font-display text-xs px-6 py-3 tracking-[0.15em] uppercase hover:bg-cream hover:text-dark transition-colors"
-              >
-                Cotizar básico <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
+              <WhatsAppButton
+                message="Hola 👋 Me interesa el plan Básico de branding ($500 USD)."
+                label="Cotizar básico"
+                variant="outline"
+                className="w-full justify-center px-6 py-3 tracking-[0.15em]"
+              />
             </motion.div>
 
             {/* Plan Completo */}
@@ -685,12 +684,11 @@ export default function BrandingPage() {
                   </li>
                 ))}
               </ul>
-              <Link
-                href="#contactar"
-                className="flex items-center justify-center gap-2 bg-accent text-dark font-display text-xs px-6 py-3 tracking-[0.15em] uppercase hover:bg-cream transition-colors"
-              >
-                Solicitar cotización <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
+              <WhatsAppButton
+                message="Hola 👋 Me interesa el plan Completo de branding ($700–$2.000 USD)."
+                label="Solicitar cotización"
+                className="w-full justify-center px-6 py-3 tracking-[0.15em]"
+              />
             </motion.div>
           </motion.div>
 
@@ -823,19 +821,17 @@ export default function BrandingPage() {
               variants={fadeUp}
               className="mt-10 flex flex-wrap items-center justify-center gap-3"
             >
-              <a
-                href="tel:+525500000000"
-                className="inline-flex items-center gap-2 bg-dark text-cream font-display text-sm px-7 py-3 tracking-[0.12em] uppercase hover:bg-cream hover:text-dark transition-colors"
-              >
-                <Phone className="h-4 w-4" />
-                Agendar llamada
-              </a>
+              <WhatsAppButton
+                message="Hola 👋 Quiero información sobre el branding de mi marca."
+                label="Escríbenos por WhatsApp"
+                className="px-7 py-3 text-sm"
+              />
               <Link
                 href="/#contacto"
                 className="inline-flex items-center gap-2 border-2 border-dark text-dark font-display text-sm px-7 py-3 tracking-[0.12em] uppercase hover:bg-dark hover:text-cream transition-colors"
               >
                 <Mail className="h-4 w-4" />
-                Escribir mensaje
+                Escribir por correo
               </Link>
             </motion.div>
           </motion.div>

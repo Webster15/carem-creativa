@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { SERVICES } from "@/lib/services";
+import { whatsappLink } from "@/lib/whatsapp";
+import { WhatsAppIcon } from "@/components/ui/whatsapp-button";
 
 const NAV = [
   { href: "/#inicio", label: "Inicio" },
@@ -166,12 +168,15 @@ export function Header() {
           ))}
         </nav>
 
-        <Link
-          href="/#contacto"
-          className="font-display text-xs bg-brand text-cream px-5 py-2.5 tracking-[0.15em] uppercase hover:bg-accent transition-colors"
+        <a
+          href={whatsappLink("Hola 👋 Quiero cotizar un proyecto de diseño.")}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 font-display text-xs bg-[#25D366] text-white px-5 py-2.5 tracking-[0.15em] uppercase hover:bg-[#1ebe5d] transition-colors"
         >
+          <WhatsAppIcon className="h-3.5 w-3.5" />
           Cotizar
-        </Link>
+        </a>
       </div>
     </header>
   );

@@ -7,6 +7,7 @@ import {
 } from "@elevenlabs/react";
 import { Mic, Loader2, Volume2, X } from "lucide-react";
 import { motion } from "framer-motion";
+import { usePathname } from "next/navigation";
 import { toast } from "sonner";
 import { fetchSignedUrl } from "@/lib/elevenlabs";
 import { cn } from "@/lib/utils";
@@ -15,6 +16,7 @@ export function FloatingButton() {
   const { startSession, endSession } = useConversationControls();
   const { status } = useConversationStatus();
   const { mode } = useConversationMode();
+  const pathname = usePathname();
 
   const isConnected = status === "connected";
   const isConnecting = status === "connecting";
@@ -68,6 +70,9 @@ export function FloatingButton() {
         : "Asistente IA";
 
   const Icon = isConnecting ? Loader2 : isSpeaking ? Volume2 : Mic;
+
+  // En la página de enlaces /bio ocultamos el asistente para una vista limpia
+  if (pathname === "/bio") return null;
 
   return (
     <div className="fixed bottom-5 right-5 sm:bottom-7 sm:right-7 z-50 flex flex-col items-end gap-2">

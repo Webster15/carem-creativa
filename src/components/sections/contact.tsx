@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Send } from "lucide-react";
 import { useAgentUI } from "@/components/voice-agent/agent-ui-context";
+import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 import { cn } from "@/lib/utils";
 
 export function Contact() {
@@ -55,14 +56,24 @@ export function Contact() {
             HABLE<span className="text-accent">MOS</span>
           </h2>
           <p className="mt-4 text-dark/50 max-w-lg">
-            Cuéntanos del proyecto. También puedes pedirle al asistente que llene
-            este formulario por ti.
+            Cuéntanos del proyecto. La forma más rápida de contactarnos es por
+            WhatsApp — te respondemos el mismo día.
           </p>
+        </div>
+
+        {/* WhatsApp — canal principal */}
+        <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-4">
+          <WhatsAppButton
+            message="Hola 👋 Quiero información sobre sus servicios de diseño."
+            label="Escríbenos por WhatsApp"
+            className="px-7 py-4 text-sm tracking-[0.15em]"
+          />
+          <span className="text-dark/40 text-sm">o déjanos un mensaje por correo 👇</span>
         </div>
 
         <form
           onSubmit={onSubmit}
-          className="mt-12 max-w-xl space-y-4"
+          className="mt-8 max-w-xl space-y-4"
         >
           <Field label="Nombre" htmlFor="nombre">
             <input
