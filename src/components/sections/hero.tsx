@@ -3,13 +3,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Mic, Loader2, Volume2, X } from "lucide-react";
 import Link from "next/link";
-import { toast } from "sonner";
-import {
-  useConversationControls,
-  useConversationStatus,
-  useConversationMode,
-} from "@elevenlabs/react";
-import { fetchSignedUrl } from "@/lib/elevenlabs";
+import { useGeminiVoice } from "@/components/voice-agent/gemini-voice-context";
 import { cn } from "@/lib/utils";
 
 const TICKER_ITEMS = [
@@ -30,28 +24,11 @@ const EXAMPLES = [
 ];
 
 function VoiceCard() {
-  const { startSession, endSession } = useConversationControls();
-  const { status } = useConversationStatus();
-  const { mode } = useConversationMode();
+  const { status, speaking, toggle } = useGeminiVoice();
 
-  const isConnected = status === "connected";
+  const isConnected = status === "active";
   const isConnecting = status === "connecting";
-  const isSpeaking = isConnected && mode === "speaking";
-
-  async function handleStart() {
-    try {
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-      const signedUrl = await fetchSignedUrl();
-      startSession({ signedUrl, connectionType: "websocket" });
-    } catch (err) {
-      if (err instanceof DOMException && err.name === "NotAllowedError") {
-        toast.error("Permite el micrófono para hablar con el asistente.");
-      } else {
-        console.error("[agent] start failed", err);
-        toast.error("No pude iniciar el asistente. Verifica la configuración.");
-      }
-    }
-  }
+  const isSpeaking = isConnected && speaking;
 
   const StatusIcon = isConnecting ? Loader2 : isSpeaking ? Volume2 : Mic;
   const btnLabel = isConnecting
@@ -96,7 +73,7 @@ function VoiceCard() {
 
       <motion.button
         type="button"
-        onClick={isConnected ? () => endSession() : handleStart}
+        onClick={toggle}
         animate={isSpeaking ? { scale: [1, 1.03, 1] } : { scale: 1 }}
         transition={{ repeat: isSpeaking ? Infinity : 0, duration: 1.4, ease: "easeInOut" }}
         whileHover={{ scale: 1.02 }}
