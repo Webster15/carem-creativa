@@ -12,88 +12,18 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   GoogleGenAI,
-  Modality,
-  Type,
   type Session,
   type LiveServerMessage,
-  type FunctionDeclaration,
   type FunctionResponse,
 } from "@google/genai";
 import { getService, SERVICE_IDS, type ServiceId } from "@/lib/services";
+import { GEMINI_LIVE_MODEL } from "@/lib/gemini-live-config";
 import { useAgentUI } from "./agent-ui-context";
 import {
   MicCapture,
   PcmStreamPlayer,
   base64Pcm16ToFloat32,
 } from "@/lib/gemini-live-audio";
-
-const MODEL = "gemini-3.1-flash-live-preview";
-
-const SYSTEM = `Eres el asistente de voz de CaremCreativa, agencia de diseño gráfico en Colombia. Hablas en español colombiano, cálido, cercano y profesional. Respuestas MUY breves: 1 o 2 frases por turno.
-
-Servicios (usa el id exacto en mostrarServicio):
-- branding: Identidad de marca completa. Básico 500 dólares, Completo entre 700 y 2.000 dólares.
-- logo: Diseño de logo e identidad corporativa. Desde 400 dólares.
-- naming: Creación del nombre de la marca.
-- redes-sociales: SOLO diseño visual para redes. No es marketing ni pauta.
-- web: Páginas web y tiendas virtuales en WordPress.
-- apps: Apps web y móviles. Desde 3.000 dólares.
-
-Curso: illustrator (Adobe Illustrator de 0 a avanzado, 7 módulos, 90 videos, acceso de por vida, 70 dólares en promo).
-
-Reglas:
-1. Cuando el usuario mencione un servicio, llama mostrarServicio con el id y abrirDetalle true para abrir su página.
-2. Para ir a una sección de la página principal usa resaltarSeccion (inicio, servicios, portafolio, nosotros, contacto).
-3. Para el curso usa resaltarSeccion con sectionId "/cursos/illustrator".
-4. Para ver trabajos pasados usa mostrarPortafolio.
-5. Para cotizar pide nombre, email y descripción y llama agendarContacto; avísale que revise y pulse Enviar.
-6. Nunca inventes precios. Redes sociales es solo diseño, aclararlo si preguntan.
-7. Saluda breve al inicio y pregunta en qué puedes ayudar.`;
-
-const TOOLS: FunctionDeclaration[] = [
-  {
-    name: "mostrarServicio",
-    description: "Abre o resalta un servicio. IDs: branding, logo, naming, redes-sociales, web, apps.",
-    parameters: {
-      type: Type.OBJECT,
-      properties: {
-        serviceId: { type: Type.STRING, description: "branding | logo | naming | redes-sociales | web | apps" },
-        abrirDetalle: { type: Type.BOOLEAN, description: "true para abrir la página completa del servicio" },
-        seccion: { type: Type.STRING, description: "sección dentro de la página (precios, proceso, faq, etc.)" },
-      },
-      required: ["serviceId"],
-    },
-  },
-  {
-    name: "resaltarSeccion",
-    description: "Hace scroll a una sección o navega a una ruta interna como /cursos/illustrator",
-    parameters: {
-      type: Type.OBJECT,
-      properties: {
-        sectionId: { type: Type.STRING, description: "inicio | servicios | portafolio | nosotros | contacto, o una ruta /..." },
-      },
-      required: ["sectionId"],
-    },
-  },
-  {
-    name: "mostrarPortafolio",
-    description: "Hace scroll a la sección de portafolio",
-    parameters: { type: Type.OBJECT, properties: {} },
-  },
-  {
-    name: "agendarContacto",
-    description: "Pre-rellena el formulario de contacto",
-    parameters: {
-      type: Type.OBJECT,
-      properties: {
-        nombre: { type: Type.STRING },
-        email: { type: Type.STRING },
-        mensaje: { type: Type.STRING },
-      },
-      required: ["nombre", "email", "mensaje"],
-    },
-  },
-];
 
 function scrollToId(id: string): boolean {
   if (typeof document === "undefined") return false;
@@ -192,6 +122,7 @@ export function GeminiVoiceProvider({ children }: { children: React.ReactNode })
 
   const handleMessage = useCallback(
     (msg: LiveServerMessage) => {
+      if (msg.setupComplete) console.log("[gemini-live] setupComplete ✓ (sesión lista)");
       const parts = msg.serverContent?.modelTurn?.parts;
       if (parts) {
         for (const part of parts) {
@@ -238,9 +169,11 @@ export function GeminiVoiceProvider({ children }: { children: React.ReactNode })
 
       const ai = new GoogleGenAI({ apiKey: token, httpOptions: { apiVersion: "v1alpha" } });
       const session = await ai.live.connect({
-        model: MODEL,
+        // La config (voz, instrucciones, tools) ya viene bloqueada en el token
+        model: GEMINI_LIVE_MODEL,
         callbacks: {
           onopen: async () => {
+            console.log("[gemini-live] WebSocket abierto ✓");
             const mic = new MicCapture();
             micRef.current = mic;
             await mic.start((b64) => {
@@ -252,17 +185,13 @@ export function GeminiVoiceProvider({ children }: { children: React.ReactNode })
           },
           onmessage: handleMessage,
           onerror: (e) => {
-            console.error("[gemini-live] error", e);
+            console.error("[gemini-live] onerror →", (e as ErrorEvent)?.message, e);
             void disconnect();
           },
-          onclose: () => {
+          onclose: (e) => {
+            console.warn("[gemini-live] onclose → code:", e?.code, "| reason:", e?.reason);
             void disconnect();
           },
-        },
-        config: {
-          responseModalities: [Modality.AUDIO],
-          systemInstruction: SYSTEM,
-          tools: [{ functionDeclarations: TOOLS }],
         },
       });
       sessionRef.current = session;

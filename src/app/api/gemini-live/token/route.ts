@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
+import { GEMINI_LIVE_MODEL, liveConfig } from "@/lib/gemini-live-config";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-export const GEMINI_LIVE_MODEL = "gemini-3.1-flash-live-preview";
 
 export async function POST() {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -23,7 +22,9 @@ export async function POST() {
         newSessionExpireTime: new Date(Date.now() + 60 * 1000).toISOString(),
         // …y la sesión vive hasta 30 min
         expireTime: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-        liveConnectConstraints: { model: GEMINI_LIVE_MODEL },
+        // IMPORTANTE: la config completa va DENTRO del token. Si se manda
+        // aparte al conectar, Google responde con 1011 "Internal error".
+        liveConnectConstraints: { model: GEMINI_LIVE_MODEL, config: liveConfig },
       },
     });
 
