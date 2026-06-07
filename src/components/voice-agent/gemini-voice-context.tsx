@@ -18,6 +18,7 @@ import {
 } from "@google/genai";
 import { getService, SERVICE_IDS, type ServiceId } from "@/lib/services";
 import { GEMINI_LIVE_MODEL } from "@/lib/gemini-live-config";
+import { whatsappLink } from "@/lib/whatsapp";
 import { useAgentUI } from "./agent-ui-context";
 import {
   MicCapture,
@@ -70,13 +71,30 @@ export function GeminiVoiceProvider({ children }: { children: React.ReactNode })
         const svc = getService(serviceId as ServiceId)!;
         actions.highlightService(serviceId as ServiceId);
         const abrir = Boolean(args.abrirDetalle);
-        const seccion = typeof args.seccion === "string" ? args.seccion.trim() : "";
+        let seccion = typeof args.seccion === "string" ? args.seccion.trim() : "";
+        // Normalizar la sección de precios: en /servicios/web el id es "precios",
+        // en el resto es "inversion". Así el asistente siempre puede pedir "precios".
+        const PRICING = ["precios", "precio", "inversion", "inversión", "tarifas", "tarifa", "costos", "costo"];
+        if (PRICING.includes(seccion.toLowerCase())) {
+          seccion = serviceId === "web" ? "precios" : "inversion";
+        }
         if (abrir && svc.pageUrl) {
           router.push(seccion ? `${svc.pageUrl}#${seccion}` : svc.pageUrl);
           return `Abriendo ${svc.title}.`;
         }
         if (!scrollToId(`servicio-${svc.slug}`)) scrollToId("servicios");
         return `Mostrando ${svc.title}.`;
+      }
+
+      if (name === "abrirWhatsApp") {
+        const mensaje =
+          typeof args.mensaje === "string" && args.mensaje.trim()
+            ? args.mensaje.trim()
+            : "Hola 👋 Quiero información sobre sus servicios.";
+        if (typeof window !== "undefined") {
+          window.open(whatsappLink(mensaje), "_blank", "noopener,noreferrer");
+        }
+        return "Abriendo WhatsApp para que escribas a la agencia.";
       }
 
       if (name === "resaltarSeccion") {
@@ -122,7 +140,14 @@ export function GeminiVoiceProvider({ children }: { children: React.ReactNode })
 
   const handleMessage = useCallback(
     (msg: LiveServerMessage) => {
-      if (msg.setupComplete) console.log("[gemini-live] setupComplete ✓ (sesión lista)");
+      if (msg.setupComplete) {
+        console.log("[gemini-live] setupComplete ✓ (sesión lista)");
+        // Disparar el saludo inicial del asistente
+        sessionRef.current?.sendClientContent({
+          turns: "El usuario acaba de activar el asistente. Salúdalo en una sola frase corta y pregúntale qué servicio necesita.",
+          turnComplete: true,
+        });
+      }
       const parts = msg.serverContent?.modelTurn?.parts;
       if (parts) {
         for (const part of parts) {
