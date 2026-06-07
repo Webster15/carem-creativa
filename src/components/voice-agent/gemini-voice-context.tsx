@@ -130,7 +130,15 @@ export function GeminiVoiceProvider({ children }: { children: React.ReactNode })
             ? args.mensaje.trim()
             : "Hola 👋 Quiero información sobre sus servicios.";
         if (typeof window !== "undefined") {
-          window.open(whatsappLink(mensaje), "_blank", "noopener,noreferrer");
+          const url = whatsappLink(mensaje);
+          const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+          if (isMobile) {
+            // En móvil window.open suele bloquearse; navegar abre la app de WhatsApp
+            window.location.href = url;
+          } else {
+            const w = window.open(url, "_blank", "noopener,noreferrer");
+            if (!w) window.location.href = url; // fallback si el popup se bloquea
+          }
         }
         return "Abriendo WhatsApp para que escribas a la agencia.";
       }
@@ -149,15 +157,6 @@ export function GeminiVoiceProvider({ children }: { children: React.ReactNode })
       if (name === "mostrarPortafolio") {
         scrollToId("portafolio");
         return "Mostrando el portafolio.";
-      }
-
-      if (name === "agendarContacto") {
-        const nombre = String(args.nombre ?? "");
-        const email = String(args.email ?? "");
-        const mensaje = String(args.mensaje ?? "");
-        actions.setContactDraft({ nombre, email, mensaje });
-        scrollToId("contacto");
-        return `Listo ${nombre}, llené el formulario. Revísalo y pulsa Enviar.`;
       }
 
       return "Hecho.";

@@ -18,8 +18,8 @@ Curso: illustrator (Adobe Illustrator de 0 a avanzado, 7 módulos, 90 videos, ac
 Reglas:
 1. SALUDO INICIAL: apenas inicies la sesión, saluda con UNA frase corta tipo "¡Hola! Soy tu asistente virtual, dime qué servicio necesitas." y espera a que el usuario hable.
 2. Cuando el usuario mencione un servicio, llama mostrarServicio con el serviceId para abrir su página. Cada servicio tiene secciones: si el usuario pregunta por un aspecto concreto, pasa también "seccion" con uno de estos valores: "precios", "que incluye", "proceso", "faq", "tipos" o "modalidades". Ejemplos: "¿qué incluye el branding?" → mostrarServicio(branding, seccion="que incluye"); "¿cómo es el proceso de la web?" → mostrarServicio(web, seccion="proceso").
-3. PRECIOS: si preguntan por precio o cuánto cuesta, llama mostrarServicio con seccion "precios", dile el estimado "desde X dólares" en voz, y ofrécele conectarlo por WhatsApp. NO pidas datos para un formulario.
-4. CONTACTO: para contactar, cotizar o hablar con una persona, SIEMPRE prefiere WhatsApp: llama abrirWhatsApp con un mensaje sugerido. Usa el formulario (agendarContacto) solo si el usuario pide expresamente dejar sus datos por correo.
+3. PRECIOS: si preguntan por precio o cuánto cuesta, llama mostrarServicio con seccion "precios" y dile el estimado "desde X dólares" en voz. Responde la pregunta; NO ofrezcas contacto en ese mismo turno.
+4. CONTACTO: el ÚNICO canal es WhatsApp (no hay formulario). NO lo ofrezcas en cada respuesta — sería molesto. Llama abrirWhatsApp SOLO cuando: (a) el usuario pida explícitamente contactar/cotizar/hablar con alguien, o (b) como cierre, una sola vez, cuando notes que la conversación está terminando o el usuario está decidido. En ese cierre di algo natural como "Si quieres, te conecto por WhatsApp para afinar los detalles".
 5. Para ir a una sección de la página principal usa resaltarSeccion (inicio, servicios, portafolio, nosotros, contacto). Para el curso usa resaltarSeccion con sectionId "/cursos/illustrator". Para ver trabajos usa mostrarPortafolio.
 6. Nunca inventes precios; usa los "desde X" de arriba. Redes sociales es solo diseño, aclararlo si preguntan.`;
 
@@ -55,25 +55,12 @@ const TOOLS: FunctionDeclaration[] = [
   },
   {
     name: "abrirWhatsApp",
-    description: "Abre WhatsApp para que el usuario escriba a la agencia. Úsalo cuando quiera contactar, cotizar o hablar con una persona (es el canal preferido).",
+    description: "Abre WhatsApp para que el usuario escriba a la agencia. Úsalo solo cuando el usuario quiera contactar/cotizar, o como cierre una sola vez (es el único canal de contacto).",
     parameters: {
       type: Type.OBJECT,
       properties: {
         mensaje: { type: Type.STRING, description: "Mensaje inicial sugerido, ej: 'Hola, quiero info sobre páginas web'" },
       },
-    },
-  },
-  {
-    name: "agendarContacto",
-    description: "Pre-rellena el formulario de contacto",
-    parameters: {
-      type: Type.OBJECT,
-      properties: {
-        nombre: { type: Type.STRING },
-        email: { type: Type.STRING },
-        mensaje: { type: Type.STRING },
-      },
-      required: ["nombre", "email", "mensaje"],
     },
   },
 ];
