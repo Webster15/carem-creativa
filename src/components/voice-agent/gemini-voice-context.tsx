@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner";
 import {
   GoogleGenAI,
@@ -32,6 +32,42 @@ function scrollToId(id: string): boolean {
   if (!el) return false;
   el.scrollIntoView({ behavior: "smooth", block: "start" });
   return true;
+}
+
+// Conceptos de sección → ancla real en cada página de servicio.
+// (Cada servicio nombra sus secciones distinto; esto las unifica.)
+type SectionConcept =
+  | "precios" | "incluye" | "proceso" | "faq" | "tipos" | "modalidades" | "quees" | "paraquien";
+
+const SECTION_MAP: Record<string, Partial<Record<SectionConcept, string>>> = {
+  web: { precios: "precios", incluye: "que-incluye", proceso: "proceso", faq: "faq", tipos: "tipos" },
+  logo: { precios: "inversion", incluye: "entregables", proceso: "proceso", faq: "faq" },
+  naming: { precios: "inversion", incluye: "entregables", proceso: "proceso", faq: "faq" },
+  "redes-sociales": { precios: "inversion", incluye: "entregables", proceso: "proceso", faq: "faq", modalidades: "modalidades" },
+  apps: { precios: "inversion", incluye: "entregables", proceso: "proceso", faq: "faq", tipos: "tipos" },
+  branding: { precios: "inversion", incluye: "entregables", proceso: "proceso", faq: "faq", quees: "que-es", paraquien: "para-quien" },
+};
+
+function toConcept(raw: string): SectionConcept | null {
+  const s = raw.toLowerCase();
+  if (/precio|inversi|tarifa|costo|cuant|cuánt|vale/.test(s)) return "precios";
+  if (/incluy|entrega|recib|deliverab|contiene|incluido/.test(s)) return "incluye";
+  if (/proces|paso|etapa|metodolog|c[oó]mo trabaj/.test(s)) return "proceso";
+  if (/faq|pregunt|duda/.test(s)) return "faq";
+  if (/modalidad/.test(s)) return "modalidades";
+  if (/tipo|clase/.test(s)) return "tipos";
+  if (/qu[eé] es|concepto/.test(s)) return "quees";
+  if (/para qui[eé]n|dirigido/.test(s)) return "paraquien";
+  return null;
+}
+
+// Devuelve el id de ancla correcto para el servicio, o "" si no aplica.
+function resolveAnchor(serviceId: string, rawSeccion: string): string {
+  if (!rawSeccion) return "";
+  const concept = toConcept(rawSeccion);
+  if (concept) return SECTION_MAP[serviceId]?.[concept] ?? "";
+  // El modelo pudo pasar el id exacto: normalizar espacios → guiones
+  return rawSeccion.toLowerCase().replace(/\s+/g, "-");
 }
 
 export type VoiceStatus = "idle" | "connecting" | "active";
@@ -60,6 +96,7 @@ export function GeminiVoiceProvider({ children }: { children: React.ReactNode })
 
   const { actions } = useAgentUI();
   const router = useRouter();
+  const pathname = usePathname();
 
   const executeTool = useCallback(
     (name: string, args: Record<string, unknown>): string => {
@@ -70,17 +107,18 @@ export function GeminiVoiceProvider({ children }: { children: React.ReactNode })
         }
         const svc = getService(serviceId as ServiceId)!;
         actions.highlightService(serviceId as ServiceId);
-        const abrir = Boolean(args.abrirDetalle);
-        let seccion = typeof args.seccion === "string" ? args.seccion.trim() : "";
-        // Normalizar la sección de precios: en /servicios/web el id es "precios",
-        // en el resto es "inversion". Así el asistente siempre puede pedir "precios".
-        const PRICING = ["precios", "precio", "inversion", "inversión", "tarifas", "tarifa", "costos", "costo"];
-        if (PRICING.includes(seccion.toLowerCase())) {
-          seccion = serviceId === "web" ? "precios" : "inversion";
-        }
-        if (abrir && svc.pageUrl) {
-          router.push(seccion ? `${svc.pageUrl}#${seccion}` : svc.pageUrl);
-          return `Abriendo ${svc.title}.`;
+        const rawSeccion = typeof args.seccion === "string" ? args.seccion.trim() : "";
+        const anchor = resolveAnchor(serviceId, rawSeccion);
+        const targetPath = svc.pageUrl;
+        if (targetPath) {
+          // Si ya estamos en la página del servicio, solo hacemos scroll
+          if (pathname === targetPath) {
+            if (anchor) scrollToId(anchor);
+            return anchor ? `Mostrando la sección ${anchor}.` : `Ya estás en ${svc.title}.`;
+          }
+          // Si no, navegamos a la página (con ancla si la hay)
+          router.push(anchor ? `${targetPath}#${anchor}` : targetPath);
+          return `Abriendo ${svc.title}${anchor ? `, sección ${anchor}` : ""}.`;
         }
         if (!scrollToId(`servicio-${svc.slug}`)) scrollToId("servicios");
         return `Mostrando ${svc.title}.`;
@@ -124,7 +162,7 @@ export function GeminiVoiceProvider({ children }: { children: React.ReactNode })
 
       return "Hecho.";
     },
-    [actions, router]
+    [actions, router, pathname]
   );
 
   const disconnect = useCallback(async () => {
