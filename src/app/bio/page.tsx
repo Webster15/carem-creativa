@@ -150,7 +150,7 @@ export default function BioPage() {
 
         {/* ── Anijam — banner destacado arriba ── */}
         <a
-          href="https://www.anijam.ai/?src=ins/sc"
+          href="https://www.anijam.ai/?src=ins/sccarem"
           target="_blank"
           rel="noopener noreferrer"
           className="group block mt-8 rounded-2xl overflow-hidden shadow-sm transition-transform hover:scale-[1.01]"
