@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   GoogleGenAI,
@@ -96,7 +96,6 @@ export function GeminiVoiceProvider({ children }: { children: React.ReactNode })
 
   const { actions } = useAgentUI();
   const router = useRouter();
-  const pathname = usePathname();
 
   const executeTool = useCallback(
     (name: string, args: Record<string, unknown>): string => {
@@ -110,9 +109,12 @@ export function GeminiVoiceProvider({ children }: { children: React.ReactNode })
         const rawSeccion = typeof args.seccion === "string" ? args.seccion.trim() : "";
         const anchor = resolveAnchor(serviceId, rawSeccion);
         const targetPath = svc.pageUrl;
+        // Leemos la ruta actual EN VIVO (no la del momento en que se activó el
+        // asistente), para detectar bien si ya estamos en la página o no.
+        const currentPath = typeof window !== "undefined" ? window.location.pathname : "";
         if (targetPath) {
           // Si ya estamos en la página del servicio, solo hacemos scroll
-          if (pathname === targetPath) {
+          if (currentPath === targetPath) {
             if (anchor) scrollToId(anchor);
             return anchor ? `Mostrando la sección ${anchor}.` : `Ya estás en ${svc.title}.`;
           }
@@ -161,7 +163,7 @@ export function GeminiVoiceProvider({ children }: { children: React.ReactNode })
 
       return "Hecho.";
     },
-    [actions, router, pathname]
+    [actions, router]
   );
 
   const disconnect = useCallback(async () => {
