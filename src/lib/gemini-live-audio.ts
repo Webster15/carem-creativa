@@ -67,6 +67,11 @@ export class PcmStreamPlayer {
     src.onended = () => this.sources.delete(src);
   }
 
+  /** true si todavía hay audio del asistente sonando (o por sonar). */
+  isPlaying(): boolean {
+    return this.nextTime > this.ctx.currentTime + 0.05;
+  }
+
   /** Corta toda la reproducción pendiente (cuando el usuario interrumpe). */
   clear() {
     for (const s of this.sources) {

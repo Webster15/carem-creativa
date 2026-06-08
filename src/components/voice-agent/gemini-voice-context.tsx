@@ -239,6 +239,10 @@ export function GeminiVoiceProvider({ children }: { children: React.ReactNode })
             const mic = new MicCapture();
             micRef.current = mic;
             await mic.start((b64) => {
+              // Half-duplex: si el asistente está hablando, NO mandamos audio del
+              // mic — así no se escucha a sí mismo por el parlante y no se
+              // interrumpe (lo que causaba el sonido entrecortado).
+              if (playerRef.current?.isPlaying()) return;
               sessionRef.current?.sendRealtimeInput({
                 audio: { data: b64, mimeType: "audio/pcm;rate=16000" },
               });
