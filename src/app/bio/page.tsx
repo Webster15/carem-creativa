@@ -148,26 +148,28 @@ export default function BioPage() {
           </p>
         </header>
 
-        {/* ── Anijam — banner destacado arriba ── */}
+        {/* ── Banners destacados (los más nuevos primero) ── */}
+
+        {/* apob */}
         <a
-          href="https://www.anijam.ai/?src=ins/sccarem"
+          href="https://mega.apob.ai/caremcreativa"
           target="_blank"
           rel="noopener noreferrer"
           className="group block mt-8 rounded-2xl overflow-hidden shadow-sm transition-transform hover:scale-[1.01]"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/anijam.png" alt="Anijam — descárgala en Google Play y App Store" className="w-full h-auto" />
+          <img src="/apob.png" alt="apob" className="w-full h-auto" />
         </a>
 
-        {/* ── apob — banner destacado ── */}
+        {/* Anijam */}
         <a
-          href="https://mega.apob.ai/caremcreativa"
+          href="https://www.anijam.ai/?src=ins/sccarem"
           target="_blank"
           rel="noopener noreferrer"
           className="group block mt-4 rounded-2xl overflow-hidden shadow-sm transition-transform hover:scale-[1.01]"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/apob.png" alt="apob" className="w-full h-auto" />
+          <img src="/anijam.png" alt="Anijam — descárgala en Google Play y App Store" className="w-full h-auto" />
         </a>
 
         {/* ── Curso Illustrator — imagen completa, grande ── */}
