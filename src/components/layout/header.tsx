@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, FlaskConical } from "lucide-react";
 import { SERVICES } from "@/lib/services";
 import { whatsappLink } from "@/lib/whatsapp";
 import { WhatsAppIcon } from "@/components/ui/whatsapp-button";
@@ -171,12 +171,14 @@ export function Header() {
             href="https://lab.caremcreativa.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="relative inline-flex items-center gap-1.5 font-display text-xs bg-brand text-cream px-4 py-1.5 tracking-[0.12em] uppercase hover:bg-dark transition-colors"
+            className="group/lab relative inline-flex items-center gap-2 font-display text-sm bg-accent text-cream border-2 border-dark px-3.5 py-2 tracking-[0.1em] uppercase shadow-[3px_3px_0_0_var(--color-dark)] hover:bg-vivid hover:shadow-[1px_1px_0_0_var(--color-dark)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
           >
-            <span className="absolute -top-1.5 -right-1.5 bg-accent text-cream text-[9px] font-bold px-1.5 py-0.5 leading-none uppercase tracking-wide">
-              nuevo
+            <span className="absolute -top-2 -right-2 flex h-3.5 w-3.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75" />
+              <span className="relative inline-flex h-3.5 w-3.5 rounded-full bg-brand border-2 border-cream" />
             </span>
-            ⚗ Lab
+            <FlaskConical className="h-4 w-4 shrink-0 group-hover/lab:-rotate-12 transition-transform" />
+            Lab
           </a>
         </nav>
 
