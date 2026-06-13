@@ -166,6 +166,18 @@ export function Header() {
               {item.label}
             </Link>
           ))}
+
+          <a
+            href="https://lab.caremcreativa.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative inline-flex items-center gap-1.5 font-display text-xs bg-brand text-cream px-4 py-1.5 tracking-[0.12em] uppercase hover:bg-dark transition-colors"
+          >
+            <span className="absolute -top-1.5 -right-1.5 bg-accent text-cream text-[9px] font-bold px-1.5 py-0.5 leading-none uppercase tracking-wide">
+              nuevo
+            </span>
+            ⚗ Lab
+          </a>
         </nav>
 
         <a
