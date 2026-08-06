@@ -168,16 +168,31 @@ export async function eventoValido(
  */
 export async function consultaTransaccion(id: string): Promise<TransaccionWompi | null> {
   const base = api();
+
+  // La consulta de transacciones es pública, pero desde un centro de datos
+  // Wompi responde 403 si va sin autenticar. Se manda la llave privada
+  // cuando la hay: es una petición servidor a servidor, nunca llega al
+  // navegador.
+  const prv = process.env.WOMPI_PRIVATE_KEY ?? "";
+  const cabeceras: Record<string, string> = { Accept: "application/json" };
+  if (prv.startsWith("prv_test_") || prv.startsWith("prv_prod_")) {
+    cabeceras.Authorization = `Bearer ${prv}`;
+  }
+
   try {
     const res = await fetch(`${base}/transactions/${encodeURIComponent(id)}`, {
+      headers: cabeceras,
       signal: AbortSignal.timeout(8000),
       cache: "no-store",
     });
     if (!res.ok) {
       // Antes se devolvía null sin más, y un 404 por consultar el entorno
       // equivocado era indistinguible de una transacción inexistente.
+      const detalle = await res.text().catch(() => "");
       console.error(
-        `[wompi] ${res.status} al consultar ${id} en ${base} (entorno ${entorno()})`
+        `[wompi] ${res.status} al consultar ${id} en ${base} ` +
+          `(entorno ${entorno()}, autenticada: ${!!cabeceras.Authorization}) ` +
+          detalle.slice(0, 300)
       );
       return null;
     }
