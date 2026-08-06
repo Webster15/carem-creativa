@@ -16,6 +16,7 @@ export type Licencia = {
   correo: string;
   herramientas: IdHerramienta[];
   producto: string;
+  referencia: string | null;
   estado: "activa" | "anulada";
   max_equipos: number;
 };

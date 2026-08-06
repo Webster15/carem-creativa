@@ -162,9 +162,37 @@ export async function eventoValido(
 }
 
 /**
- * Consulta el estado real de una transacción contra la API.
- * Se usa en la página de retorno: el parámetro de la URL lo controla el
- * navegador, así que no basta con creerse lo que traiga.
+ * Testigo firmado que viaja en la URL de retorno.
+ *
+ * La página de gracias no puede consultar la API de Wompi: su cortafuegos
+ * devuelve 403 a las peticiones que salen de un centro de datos, incluso
+ * autenticadas. Así que, en lugar de verificar la transacción contra Wompi,
+ * se firma la referencia al iniciar la compra y se comprueba a la vuelta.
+ *
+ * Sin esto bastaría con adivinar un identificador de transacción ajeno para
+ * ver la clave de otra persona: los identificadores de Wompi llevan una
+ * marca de tiempo y son parcialmente predecibles.
+ */
+export async function tokenRetorno(referencia: string): Promise<string> {
+  const secreto = process.env.WOMPI_INTEGRITY_SECRET;
+  if (!secreto) throw new Error("Falta WOMPI_INTEGRITY_SECRET");
+  // El prefijo separa este uso del de la firma de integridad de Wompi, para
+  // que un mismo secreto no genere valores intercambiables entre los dos.
+  return sha256(`gracias:${referencia}:${secreto}`);
+}
+
+/** Comparación en tiempo constante, para no filtrar el testigo por temporización. */
+export function tokenValido(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let dif = 0;
+  for (let i = 0; i < a.length; i++) dif |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return dif === 0;
+}
+
+/**
+ * NO USAR desde Vercel: el cortafuegos de Wompi responde 403 a las peticiones
+ * que salen de un centro de datos. Se conserva por si algún día se ejecuta
+ * desde una red permitida.
  */
 export async function consultaTransaccion(id: string): Promise<TransaccionWompi | null> {
   const base = api();

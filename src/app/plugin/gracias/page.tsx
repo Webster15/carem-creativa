@@ -9,15 +9,17 @@ type Estado =
   | { fase: "cargando" }
   | { fase: "lista"; clave: string; correo: string }
   | { fase: "pendiente" }
-  | { fase: "rechazado"; estado: string }
+  | { fase: "sin-rastro" }
   | { fase: "error"; mensaje: string };
 
 /**
  * Página de retorno de Wompi.
  *
  * El id de transacción llega por la URL, que controla el navegador, así que
- * no se cree: el servidor consulta el estado real contra la API de Wompi
- * antes de mostrar ninguna clave.
+ * no basta con creérselo. No se puede verificar contra la API de Wompi —su
+ * cortafuegos bloquea las peticiones desde centros de datos—, así que la
+ * URL trae además un testigo firmado por el servidor al iniciar la compra,
+ * y es eso lo que se comprueba.
  *
  * La clave se muestra aquí además de enviarse por correo, para que un fallo
  * del correo no deje al cliente sin lo que ha pagado.
@@ -25,17 +27,18 @@ type Estado =
 function Contenido() {
   const params = useSearchParams();
   const id = params.get("id");
+  const token = params.get("t");
   // La ausencia de id se conoce ya en el primer render, así que se resuelve
   // en el estado inicial en lugar de con un setState dentro del efecto.
   const [estado, setEstado] = useState<Estado>(() =>
-    id
+    id && token
       ? { fase: "cargando" }
-      : { fase: "error", mensaje: "Falta el identificador de la transacción." }
+      : { fase: "error", mensaje: "El enlace de retorno está incompleto." }
   );
   const [copiado, setCopiado] = useState(false);
 
   useEffect(() => {
-    if (!id) return;
+    if (!id || !token) return;
 
     let intentos = 0;
     let vivo = true;
@@ -45,7 +48,7 @@ function Contenido() {
         const res = await fetch("/api/plugin/licencia-de-transaccion", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ transaccion: id }),
+          body: JSON.stringify({ transaccion: id, token }),
         });
         const d = await res.json();
         if (!vivo) return;
@@ -58,13 +61,15 @@ function Contenido() {
           setEstado({ fase: "lista", clave: d.clave, correo: d.correo });
           return;
         }
-        if (d.estado === "APPROVED") {
-          // El webhook puede tardar unos segundos en emitir la licencia.
+        // El webhook tarda unos segundos en emitir la licencia. Si tras
+        // varios intentos sigue sin aparecer, o el pago no se aprobó o algo
+        // falló: en cualquier caso hay que decírselo a la persona.
+        if (++intentos < 12) {
           setEstado({ fase: "pendiente" });
-          if (++intentos < 12) setTimeout(consulta, 2500);
-          return;
+          setTimeout(consulta, 2500);
+        } else {
+          setEstado({ fase: "sin-rastro" });
         }
-        setEstado({ fase: "rechazado", estado: d.estado || "DESCONOCIDO" });
       } catch {
         if (vivo) setEstado({ fase: "error", mensaje: "Error de red." });
       }
@@ -72,7 +77,7 @@ function Contenido() {
 
     consulta();
     return () => { vivo = false; };
-  }, [id]);
+  }, [id, token]);
 
   async function copia(clave: string) {
     try {
@@ -163,18 +168,19 @@ function Contenido() {
           </motion.div>
         )}
 
-        {estado.fase === "rechazado" && (
+        {estado.fase === "sin-rastro" && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <XCircle className="h-10 w-10 text-cream/60" />
             <h1
               className="font-display text-cream leading-[0.9] uppercase mt-6"
               style={{ fontSize: "clamp(2rem, 6vw, 3.5rem)" }}
             >
-              El pago no se completó
+              No encontramos tu compra
             </h1>
             <p className="mt-4 text-cream/70 text-base leading-relaxed max-w-lg">
-              La transacción quedó en estado <strong className="text-cream">{estado.estado}</strong>.
-              No se te ha cobrado nada. Puedes volver a intentarlo.
+              Si el pago no se completó, no se te ha cobrado nada y puedes volver
+              a intentarlo. Si sí pagaste, escríbenos con la fecha y el correo
+              que usaste y te enviamos la clave a mano.
             </p>
             <a
               href="/plugin"

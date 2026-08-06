@@ -150,6 +150,17 @@ export default function BioPage() {
 
         {/* ── Banners destacados (los más nuevos primero) ── */}
 
+        {/* OREATE Ai */}
+        <a
+          href="https://www.oreateai.com/?fr=carem"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group block mt-8 rounded-2xl overflow-hidden shadow-sm transition-transform hover:scale-[1.01]"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/oreateai.jpg" alt="OREATE Ai" className="w-full h-auto" />
+        </a>
+
         {/* apob */}
         <a
           href="https://mega.apob.ai/caremcreativa"

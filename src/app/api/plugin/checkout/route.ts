@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { esProducto, precioCop, PRODUCTOS } from "@/lib/plugin/precios";
-import { nuevaReferencia, urlCheckout } from "@/lib/plugin/wompi";
+import { nuevaReferencia, tokenRetorno, urlCheckout } from "@/lib/plugin/wompi";
 
 /**
  * Arranca una compra: calcula el precio en pesos, firma la referencia y
@@ -42,10 +42,14 @@ export async function POST(req: Request) {
     const referencia = nuevaReferencia(producto);
     const base = process.env.SITIO_URL || new URL(req.url).origin;
 
+    // El testigo viaja en la URL de retorno; Wompi le añade el id detrás.
+    // Es lo que acredita en la vuelta que esta compra la inició este servidor.
+    const token = await tokenRetorno(referencia);
+
     const url = await urlCheckout({
       referencia,
       centavos: precio.centavos,
-      urlRedireccion: `${base}/plugin/gracias`,
+      urlRedireccion: `${base}/plugin/gracias?t=${token}`,
       correo,
     });
 
