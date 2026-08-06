@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { firmaValida, productoDeVariante, type EventoLS } from "@/lib/plugin/lemonsqueezy";
-import { creaLicencia } from "@/lib/plugin/licencias";
+import { anulaLicencia, creaLicencia } from "@/lib/plugin/licencias";
 import { PRODUCTOS } from "@/lib/plugin/precios";
 import { enviaClave } from "@/lib/plugin/correo";
 
@@ -43,12 +43,34 @@ export async function POST(req: Request) {
   }
 
   const tipo = evento.meta?.event_name;
-  if (tipo !== "order_created") {
+  if (tipo !== "order_created" && tipo !== "order_refunded") {
     return NextResponse.json({ ok: true, ignorado: tipo });
   }
 
   const a = evento.data?.attributes;
   if (!a) return NextResponse.json({ ok: true, ignorado: "sin datos" });
+
+  // Reembolso: se anula la licencia. Sin esto, quien pide el dinero de vuelta
+  // —y con Lemon Squeezy de intermediario puede hacerlo sin avisarnos— se
+  // queda con las herramientas para siempre.
+  if (tipo === "order_refunded") {
+    const id = a.identifier || String(evento.data?.id ?? "");
+    if (!id) return NextResponse.json({ ok: true, ignorado: "sin identificador" });
+    try {
+      const lic = await anulaLicencia(id);
+      console.log(
+        lic
+          ? `[plugin/webhook] licencia anulada por reembolso: ${id}`
+          : `[plugin/webhook] reembolso sin licencia asociada: ${id}`
+      );
+      return NextResponse.json({ ok: true, anulada: !!lic });
+    } catch (e) {
+      // Se pide reintento: dejar viva una licencia reembolsada es peor que
+      // recibir el evento dos veces, porque anular es idempotente.
+      console.error("[plugin/webhook] no se pudo anular, se pide reintento", e);
+      return NextResponse.json({ error: "No se pudo anular." }, { status: 503 });
+    }
+  }
 
   if (a.status !== "paid") {
     console.log(`[plugin/webhook] pedido ${a.identifier} -> ${a.status}`);

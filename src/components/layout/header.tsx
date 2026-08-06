@@ -9,6 +9,10 @@ import { WhatsAppIcon } from "@/components/ui/whatsapp-button";
 
 const NAV = [
   { href: "/#inicio", label: "Inicio" },
+  // Va junto a Cursos porque es lo mismo: un producto propio, no un servicio.
+  // Se etiqueta "Plugin" y no "Vértice" a propósito: quien llega por primera
+  // vez no sabe qué es Vértice, pero sí qué es un plugin.
+  { href: "/plugin", label: "Plugin" },
   { href: "/#portafolio", label: "Portafolio" },
   { href: "/#nosotros", label: "Nosotros" },
   { href: "/#contacto", label: "Contacto" },

@@ -18,6 +18,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      // Es la única página que vende un producto propio, no un servicio: se
+      // prioriza por encima de las de servicios.
+      url: `${BASE}/plugin`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
       url: `${BASE}/bio`,
       lastModified: now,
       changeFrequency: "monthly",

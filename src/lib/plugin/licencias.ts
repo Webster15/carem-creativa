@@ -101,6 +101,36 @@ export async function licenciaDeReferencia(referencia: string): Promise<Licencia
   return r?.[0] ?? null;
 }
 
+/**
+ * Anula la licencia de un pedido reembolsado.
+ *
+ * No borra la fila: se marca `anulada`. Conviene conservarla porque
+ * `activaEquipo` y la validación ya comprueban el estado, y porque si alguien
+ * reclama hay que poder ver que existió y por qué se anuló.
+ *
+ * El efecto no es inmediato en el equipo del cliente: el panel guarda las
+ * herramientas y solo revalida cada 7 días, con 14 de margen sin conexión. Es
+ * deliberado —así el plugin funciona en un avión— pero significa que un
+ * reembolso tarda en morder.
+ */
+export async function anulaLicencia(transaccion: string): Promise<Licencia | null> {
+  const lic = await licenciaDeTransaccion(transaccion);
+  if (!lic || lic.estado === "anulada") return lic;
+
+  await sb(`licencias?transaccion=eq.${encodeURIComponent(transaccion)}`, {
+    method: "PATCH",
+    body: JSON.stringify({ estado: "anulada" }),
+  });
+
+  // Se liberan también los equipos: si la persona vuelve a comprar, no
+  // arrastra las plazas gastadas con la licencia anulada.
+  await sb(`activaciones?clave=eq.${encodeURIComponent(normaliza(lic.clave))}`, {
+    method: "DELETE",
+  });
+
+  return { ...lic, estado: "anulada" };
+}
+
 export async function buscaLicencia(clave: string): Promise<Licencia | null> {
   const r = (await sb(
     `licencias?clave=eq.${encodeURIComponent(normaliza(clave))}&select=*&limit=1`
