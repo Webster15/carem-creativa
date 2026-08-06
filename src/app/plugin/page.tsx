@@ -386,7 +386,7 @@ export default function PluginPage() {
             códigos QR. Las demás herramientas se desbloquean con tu clave.
           </motion.p>
           <motion.div variants={fadeUp}>
-            <GuiaInstalacion />
+            <GuiaInstalacion conTitulo={false} />
           </motion.div>
         </motion.div>
       </section>
