@@ -10,13 +10,44 @@
 const CHECKOUT = "https://checkout.wompi.co/p/";
 
 /**
- * Sandbox o producción se deduce del prefijo de la llave privada, igual que
- * en el proyecto lab: así no hay una variable de entorno que pueda quedar
- * desincronizada con las credenciales.
+ * Sandbox o producción se deduce de la llave PÚBLICA, no de la privada.
+ *
+ * La pública es la que crea la transacción en el checkout, así que es la que
+ * determina en qué entorno vive. Deducirlo de la privada permitía que un par
+ * descuadrado (pública de pruebas, privada de producción) consultara el
+ * entorno equivocado y no encontrara nunca la transacción, en silencio.
+ *
+ * Si las dos no concuerdan se deja constancia en el log, porque casi siempre
+ * significa que una de las dos se pegó mal.
  */
+function entorno(): "prod" | "test" {
+  const pub = process.env.NEXT_PUBLIC_WOMPI_PUBLIC_KEY ?? "";
+  const prv = process.env.WOMPI_PRIVATE_KEY ?? "";
+
+  if (pub.startsWith("pub_prod_") || pub.startsWith("pub_test_")) {
+    const porPublica = pub.startsWith("pub_prod_") ? "prod" : "test";
+    const porPrivada = prv.startsWith("prv_prod_")
+      ? "prod"
+      : prv.startsWith("prv_test_")
+        ? "test"
+        : null;
+    if (porPrivada && porPrivada !== porPublica) {
+      console.error(
+        `[wompi] las llaves no concuerdan: la pública es de ${porPublica} y ` +
+          `la privada de ${porPrivada}. Se usa ${porPublica}, que es el entorno ` +
+          `donde se crean las transacciones. Revisa las variables de entorno.`
+      );
+    }
+    return porPublica;
+  }
+
+  // Sin pública reconocible se cae a la privada, y si tampoco, a pruebas:
+  // equivocarse hacia sandbox nunca mueve dinero real.
+  return prv.startsWith("prv_prod_") ? "prod" : "test";
+}
+
 function api(): string {
-  const key = process.env.WOMPI_PRIVATE_KEY ?? "";
-  return key.startsWith("prv_prod_")
+  return entorno() === "prod"
     ? "https://production.wompi.co/v1"
     : "https://sandbox.wompi.co/v1";
 }
@@ -136,16 +167,24 @@ export async function eventoValido(
  * navegador, así que no basta con creerse lo que traiga.
  */
 export async function consultaTransaccion(id: string): Promise<TransaccionWompi | null> {
+  const base = api();
   try {
-    const res = await fetch(`${api()}/transactions/${encodeURIComponent(id)}`, {
+    const res = await fetch(`${base}/transactions/${encodeURIComponent(id)}`, {
       signal: AbortSignal.timeout(8000),
       cache: "no-store",
     });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      // Antes se devolvía null sin más, y un 404 por consultar el entorno
+      // equivocado era indistinguible de una transacción inexistente.
+      console.error(
+        `[wompi] ${res.status} al consultar ${id} en ${base} (entorno ${entorno()})`
+      );
+      return null;
+    }
     const d = (await res.json()) as { data?: TransaccionWompi };
     return d?.data ?? null;
   } catch (e) {
-    console.error("[wompi] error consultando transacción", e);
+    console.error(`[wompi] error consultando ${id} en ${base}`, e);
     return null;
   }
 }
