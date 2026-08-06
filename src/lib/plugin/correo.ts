@@ -25,6 +25,11 @@ export async function enviaClave(destino: string, clave: string, producto: strin
   const remitente = process.env.CORREO_FROM || REMITENTE;
   const sitio = process.env.SITIO_URL || "https://www.caremcreativa.com";
 
+  // plugins@ solo envía: Resend no le crea buzón. Sin Reply-To, a quien
+  // conteste pidiendo ayuda le rebota el correo, que es la peor forma de
+  // recibir a un cliente con un problema. Apunta a un buzón que se lea.
+  const respuestas = process.env.CORREO_REPLY_TO;
+
   const texto = [
     `Tu clave de LogoForge`,
     ``,
@@ -75,6 +80,7 @@ export async function enviaClave(destino: string, clave: string, producto: strin
     body: JSON.stringify({
       from: remitente,
       to: [destino],
+      ...(respuestas ? { reply_to: respuestas } : {}),
       subject: `Tu clave de LogoForge — ${producto}`,
       text: texto,
       html,
