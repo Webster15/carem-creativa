@@ -14,32 +14,30 @@ type Estado =
   | { fase: "error"; mensaje: string };
 
 /**
- * Página de retorno de Wompi.
+ * Página de retorno de Lemon Squeezy.
  *
- * El id de transacción llega por la URL, que controla el navegador, así que
- * no basta con creérselo. No se puede verificar contra la API de Wompi —su
- * cortafuegos bloquea las peticiones desde centros de datos—, así que la
- * URL trae además un testigo firmado por el servidor al iniciar la compra,
- * y es eso lo que se comprueba.
+ * La referencia llega por la URL, que controla el navegador, así que no basta
+ * con creérsela: la URL trae además un testigo firmado por el servidor al
+ * iniciar la compra, y es eso lo que se comprueba.
  *
  * La clave se muestra aquí además de enviarse por correo, para que un fallo
  * del correo no deje al cliente sin lo que ha pagado.
  */
 function Contenido() {
   const params = useSearchParams();
-  const id = params.get("id");
+  const referencia = params.get("ref");
   const token = params.get("t");
-  // La ausencia de id se conoce ya en el primer render, así que se resuelve
-  // en el estado inicial en lugar de con un setState dentro del efecto.
+  // La ausencia de referencia se conoce ya en el primer render, así que se
+  // resuelve en el estado inicial en lugar de con un setState dentro del efecto.
   const [estado, setEstado] = useState<Estado>(() =>
-    id && token
+    referencia && token
       ? { fase: "cargando" }
       : { fase: "error", mensaje: "El enlace de retorno está incompleto." }
   );
   const [copiado, setCopiado] = useState(false);
 
   useEffect(() => {
-    if (!id || !token) return;
+    if (!referencia || !token) return;
 
     let intentos = 0;
     let vivo = true;
@@ -49,7 +47,7 @@ function Contenido() {
         const res = await fetch("/api/plugin/licencia-de-transaccion", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ transaccion: id, token }),
+          body: JSON.stringify({ referencia, token }),
         });
         const d = await res.json();
         if (!vivo) return;
@@ -78,7 +76,7 @@ function Contenido() {
 
     consulta();
     return () => { vivo = false; };
-  }, [id, token]);
+  }, [referencia, token]);
 
   async function copia(clave: string) {
     try {

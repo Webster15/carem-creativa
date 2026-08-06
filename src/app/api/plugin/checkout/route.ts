@@ -1,15 +1,13 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { esProducto, precioCop, PRODUCTOS } from "@/lib/plugin/precios";
-import { nuevaReferencia, tokenRetorno, urlCheckout } from "@/lib/plugin/wompi";
+import { esProducto, PRODUCTOS } from "@/lib/plugin/precios";
+import { creaCheckout, nuevaReferencia, tokenRetorno } from "@/lib/plugin/lemonsqueezy";
 
 /**
- * Arranca una compra: calcula el precio en pesos, firma la referencia y
- * devuelve la URL del checkout de Wompi.
+ * Arranca una compra y devuelve la URL del checkout de Lemon Squeezy.
  *
- * La firma se hace aquí y no en el navegador porque lleva el secreto de
- * integridad. Si se calculase en el cliente, cualquiera podría cambiar el
- * importe y pagar un euro por el pack.
+ * El precio no viaja desde el navegador: lo pone Lemon Squeezy a partir de la
+ * variante. Aquí solo se elige QUÉ se compra, nunca por cuánto.
  */
 
 const Body = z.object({
@@ -38,27 +36,24 @@ export async function POST(req: Request) {
   }
 
   try {
-    const precio = await precioCop(producto);
     const referencia = nuevaReferencia(producto);
     const base = process.env.SITIO_URL || new URL(req.url).origin;
 
-    // El testigo viaja en la URL de retorno; Wompi le añade el id detrás.
-    // Es lo que acredita en la vuelta que esta compra la inició este servidor.
+    // El testigo acredita en la vuelta que esta compra la inició este servidor.
     const token = await tokenRetorno(referencia);
 
-    const url = await urlCheckout({
+    const url = await creaCheckout({
+      producto,
       referencia,
-      centavos: precio.centavos,
-      urlRedireccion: `${base}/plugin/gracias?t=${token}`,
       correo,
+      urlRetorno: `${base}/plugin/gracias?ref=${encodeURIComponent(referencia)}&t=${token}`,
     });
 
     return NextResponse.json({
       url,
       referencia,
       nombre: PRODUCTOS[producto].nombre,
-      cop: precio.cop,
-      usd: precio.usd,
+      usd: PRODUCTOS[producto].usd,
     });
   } catch (e) {
     console.error("[plugin/checkout]", e);

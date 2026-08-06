@@ -109,10 +109,15 @@ function useCompra() {
 export default function PluginPage() {
   const { comprar, cargando, error } = useCompra();
 
-  // Con llaves de sandbox el checkout no cobra de verdad. Mientras se prueba,
-  // la página tiene que decirlo bien claro: si un visitante real llega aquí y
-  // "compra", no recibiría nada y pensaría que le has fallado.
-  const enPruebas = (process.env.NEXT_PUBLIC_WOMPI_PUBLIC_KEY || "").startsWith("pub_test_");
+  // En modo pruebas el checkout no cobra de verdad. Mientras tanto la página
+  // tiene que decirlo bien claro: si un visitante real llega aquí y "compra",
+  // no recibiría nada y pensaría que le has fallado.
+  //
+  // Va en una variable aparte porque la clave de Lemon Squeezy es secreta y el
+  // navegador no puede verla: hay que acordarse de apagar esto al activar la
+  // tienda. La alternativa —deducirlo en el servidor— costaba volver dinámica
+  // una página que hoy es estática.
+  const enPruebas = process.env.NEXT_PUBLIC_PAGOS_EN_PRUEBAS === "1";
 
   return (
     <>
@@ -438,9 +443,10 @@ export default function PluginPage() {
           </motion.ul>
 
           <motion.p variants={fadeUp} className="mt-10 text-dark/50 text-xs leading-relaxed max-w-2xl">
-            El precio se cobra en pesos colombianos al cambio del día, a través de Wompi
-            (Bancolombia). Se aceptan tarjetas de crédito y débito, PSE y Nequi. Si tu
-            tarjeta es extranjera, tu banco hará la conversión.
+            El pago se cobra en dólares a través de Lemon Squeezy, que actúa como
+            vendedor y se encarga de los impuestos de cada país. Se aceptan tarjetas de
+            crédito y débito, PayPal, Apple&nbsp;Pay y Google&nbsp;Pay desde cualquier
+            parte del mundo. Recibirás la factura por correo.
           </motion.p>
         </motion.div>
       </section>

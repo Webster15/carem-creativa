@@ -1,12 +1,12 @@
 /**
  * Vértice — catálogo y precios
  * ---------------------------------------------------------------
- * Los precios se definen en USD, pero Wompi solo liquida en pesos
- * colombianos, así que hay que convertir en cada compra.
+ * Los precios viven en dólares y se cobran en dólares. Con Wompi había que
+ * convertirlos a pesos en cada compra; con Lemon Squeezy el importe lo pone
+ * la variante en su panel, así que estos valores son solo para mostrarlos.
  *
- * La conversión consulta una API de divisas, pero SIEMPRE con un tipo de
- * cambio de reserva configurado: si la API falla, la venta sigue adelante
- * con el respaldo en lugar de romperse en el momento de pagar.
+ * Si cambias un precio, cámbialo también en el producto de Lemon Squeezy:
+ * el que se cobra de verdad es el suyo.
  */
 
 export type IdHerramienta =
@@ -65,62 +65,4 @@ export const PRODUCTOS: Record<
 
 export function esProducto(v: unknown): v is IdProducto {
   return typeof v === "string" && v in PRODUCTOS;
-}
-
-// ---------------------------------------------------------------
-// Conversión USD → COP
-// ---------------------------------------------------------------
-
-const FUENTE = "https://open.er-api.com/v6/latest/USD";
-
-/** Tipo de cambio de reserva. Se usa si la API de divisas no responde. */
-function respaldo(): number {
-  const v = Number(process.env.USD_COP_RESPALDO);
-  return Number.isFinite(v) && v > 0 ? v : 4000;
-}
-
-let cache: { tasa: number; hasta: number } | null = null;
-
-/**
- * Tipo de cambio USD→COP. Se guarda en memoria una hora: no tiene sentido
- * consultarlo en cada visita, y así una caída momentánea no afecta.
- */
-export async function tasaUsdCop(): Promise<{ tasa: number; origen: "api" | "respaldo" }> {
-  if (cache && cache.hasta > Date.now()) {
-    return { tasa: cache.tasa, origen: "api" };
-  }
-  try {
-    const res = await fetch(FUENTE, { signal: AbortSignal.timeout(4000) });
-    if (res.ok) {
-      const d = (await res.json()) as { result?: string; rates?: Record<string, number> };
-      const tasa = d?.rates?.COP;
-      if (d?.result === "success" && typeof tasa === "number" && tasa > 0) {
-        cache = { tasa, hasta: Date.now() + 3600_000 };
-        return { tasa, origen: "api" };
-      }
-    }
-  } catch {
-    // Se cae al respaldo sin ruido: el objetivo es no bloquear la compra.
-  }
-  console.error("[plugin/precios] usando tipo de cambio de respaldo");
-  return { tasa: respaldo(), origen: "respaldo" };
-}
-
-/**
- * Precio en pesos, redondeado al millar para que la cifra sea presentable.
- * Wompi trabaja en centavos, de ahí el segundo valor.
- */
-export async function precioCop(producto: IdProducto) {
-  const { tasa, origen } = await tasaUsdCop();
-  const usd = PRODUCTOS[producto].usd;
-  const cop = Math.round((usd * tasa) / 1000) * 1000;
-  return { usd, cop, centavos: cop * 100, tasa, origen };
-}
-
-export function formateaCop(cop: number): string {
-  return new Intl.NumberFormat("es-CO", {
-    style: "currency",
-    currency: "COP",
-    maximumFractionDigits: 0,
-  }).format(cop);
 }
