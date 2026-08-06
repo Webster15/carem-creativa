@@ -99,8 +99,24 @@ function useCompra() {
 export default function PluginPage() {
   const { comprar, cargando, error } = useCompra();
 
+  // Con llaves de sandbox el checkout no cobra de verdad. Mientras se prueba,
+  // la página tiene que decirlo bien claro: si un visitante real llega aquí y
+  // "compra", no recibiría nada y pensaría que le has fallado.
+  const enPruebas = (process.env.NEXT_PUBLIC_WOMPI_PUBLIC_KEY || "").startsWith("pub_test_");
+
   return (
     <>
+      {enPruebas && (
+        <div className="bg-accent text-cream text-center px-4 py-3">
+          <p className="mx-auto max-w-3xl text-sm leading-relaxed">
+            <strong className="font-display uppercase tracking-[0.1em]">Modo de pruebas</strong>
+            {" — "}
+            los pagos de esta página no son reales todavía. Si querías comprar,
+            escríbenos y te avisamos en cuanto esté disponible.
+          </p>
+        </div>
+      )}
+
       {/* ── Hero ───────────────────────────────────────────────────────── */}
       <section className="bg-brand overflow-hidden">
         <motion.div
