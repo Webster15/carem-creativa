@@ -135,7 +135,7 @@ export default function PluginPage() {
             className="font-display text-cream leading-[0.86] uppercase mt-3"
             style={{ fontSize: "clamp(2.6rem, 9vw, 6.5rem)" }}
           >
-            LogoForge
+            Vértice
           </motion.h1>
 
           <motion.p variants={fadeUp} className="mt-6 max-w-xl text-cream/70 text-base leading-relaxed">

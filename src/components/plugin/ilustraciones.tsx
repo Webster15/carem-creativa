@@ -129,7 +129,7 @@ export function IlusSoltarZxp() {
 /** Paso 5 — dónde aparece el panel dentro de Illustrator. */
 export function IlusMenu() {
   return (
-    <svg {...marco} role="img" aria-label="Menú Ventana, Extensiones, LogoForge">
+    <svg {...marco} role="img" aria-label="Menú Ventana, Extensiones, Vértice">
       <rect x={16} y={16} width={208} height={20} fill={DARK} />
       <text x={26} y={30} className="font-display" fontSize="11" fill={CREAM} opacity="0.5">
         Archivo
@@ -150,7 +150,7 @@ export function IlusMenu() {
 
       <rect x={126} y={78} width={98} height={26} fill={ACCENT} stroke={DARK} strokeWidth="2.5" />
       <text x={175} y={95} textAnchor="middle" className="font-display" fontSize="11" fill={CREAM} letterSpacing="0.5">
-        LOGOFORGE
+        VÉRTICE
       </text>
       <path d="M212 66 v12" stroke={DARK} strokeWidth="2" strokeDasharray="3 3" />
     </svg>
@@ -160,11 +160,11 @@ export function IlusMenu() {
 /** Activación — el banner azul del panel. */
 export function IlusPanel() {
   return (
-    <svg {...marco} role="img" aria-label="El panel de LogoForge y su banner azul">
+    <svg {...marco} role="img" aria-label="El panel de Vértice y su banner azul">
       <rect x={68} y={10} width={104} height={120} fill="#fff" stroke={DARK} strokeWidth="2.5" />
       <rect x={68} y={10} width={104} height={18} fill={DARK} />
       <text x={78} y={23} className="font-display" fontSize="9" fill={CREAM} letterSpacing="0.5">
-        LOGOFORGE
+        VÉRTICE
       </text>
 
       {/* rejilla de herramientas */}
@@ -202,7 +202,7 @@ export function IlusClave() {
       </text>
       <rect x={38} y={64} width={110} height={24} fill={CREAM} stroke={DARK} strokeWidth="2" />
       <text x={48} y={81} fontFamily="monospace" fontSize="11" fill={DARK} letterSpacing="0.5">
-        LF-••••-••••
+        VT-••••-••••
       </text>
       <rect x={156} y={64} width={46} height={24} fill={ACCENT} />
       <text x={179} y={80} textAnchor="middle" className="font-display" fontSize="10" fill={CREAM}>

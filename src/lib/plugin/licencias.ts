@@ -1,5 +1,5 @@
 /**
- * LogoForge — licencias en Supabase
+ * Vértice — licencias en Supabase
  * ---------------------------------------------------------------
  * Se habla con Supabase por su API REST con fetch, sin añadir el SDK:
  * así funciona en el runtime edge y no crece el package.json.
@@ -69,7 +69,7 @@ export function generaClave(): string {
   const bytes = crypto.getRandomValues(new Uint8Array(12));
   const letras = Array.from(bytes, (b) => ALFABETO[b % ALFABETO.length]);
   return (
-    "LF-" +
+    "VT-" +
     letras.slice(0, 4).join("") +
     "-" +
     letras.slice(4, 8).join("") +

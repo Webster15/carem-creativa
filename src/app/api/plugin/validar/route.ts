@@ -4,7 +4,7 @@ import { validaEquipo } from "@/lib/plugin/licencias";
 
 /**
  * Reconfirma en silencio una licencia ya activada. El panel la llama cada 7 días.
- * Lo consume el panel de LogoForge dentro de Illustrator.
+ * Lo consume el panel de Vértice dentro de Illustrator.
  */
 
 const Body = z.object({

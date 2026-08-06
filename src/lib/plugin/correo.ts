@@ -1,5 +1,5 @@
 /**
- * LogoForge — envío de la clave de licencia
+ * Vértice — envío de la clave de licencia
  * ---------------------------------------------------------------
  * Usa la API HTTP de Resend en vez de SMTP. Motivos:
  *
@@ -16,7 +16,7 @@
 const API = "https://api.resend.com/emails";
 
 /** Remitente por defecto. El dominio debe estar verificado en Resend. */
-const REMITENTE = "LogoForge <plugins@caremcreativa.com>";
+const REMITENTE = "Vértice <plugins@caremcreativa.com>";
 
 /* ── Identidad de marca ─────────────────────────────────────────────────────
  * Los mismos valores que globals.css. Aquí van repetidos a propósito: el
@@ -70,14 +70,14 @@ export async function enviaClave(destino: string, clave: string, producto: strin
   const respuestas = process.env.CORREO_REPLY_TO;
 
   const texto = [
-    `Tu clave de LogoForge`,
+    `Tu clave de Vértice`,
     ``,
     `Producto: ${producto}`,
     `Clave: ${clave}`,
     ``,
     `Cómo activarla:`,
-    `1. Descarga e instala LogoForge (${sitio}/plugin#descargar).`,
-    `2. Abre Ventana › Extensiones › LogoForge en Illustrator.`,
+    `1. Descarga e instala Vértice (${sitio}/plugin#descargar).`,
+    `2. Abre Ventana › Extensiones › Vértice en Illustrator.`,
     `3. Pulsa el banner azul de abajo, "Consigue tus herramientas".`,
     `4. Pega la clave en "¿Ya tienes una clave?" y dale a Activar.`,
     ``,
@@ -91,10 +91,10 @@ export async function enviaClave(destino: string, clave: string, producto: strin
   const pasos: Paso[] = [
     {
       n: "01",
-      t: "Descarga e instala LogoForge",
+      t: "Descarga e instala Vértice",
       d: `Desde ${sitio.replace(/^https?:\/\//, "")}/plugin. La guía te lleva de la mano.`,
     },
-    { n: "02", t: "Abre Ventana › Extensiones › LogoForge", d: "El panel aparece acoplado dentro de Illustrator." },
+    { n: "02", t: "Abre Ventana › Extensiones › Vértice", d: "El panel aparece acoplado dentro de Illustrator." },
     { n: "03", t: "Pulsa el banner azul de abajo", d: "El que dice «Consigue tus herramientas»." },
     { n: "04", t: "Pega la clave y dale a Activar", d: "En «¿Ya tienes una clave?». Las herramientas se desbloquean solas." },
   ];
@@ -106,7 +106,7 @@ export async function enviaClave(destino: string, clave: string, producto: strin
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light only">
 <meta name="supported-color-schemes" content="light only">
-<title>Tu clave de LogoForge</title>
+<title>Tu clave de Vértice</title>
 </head>
 <body style="margin:0;padding:0;background:${C.cream}">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0">Tu clave: ${escapa(clave)} — sirve para 2 equipos.</div>
@@ -122,7 +122,7 @@ export async function enviaClave(destino: string, clave: string, producto: strin
         Carem Creativa
       </div>
       <div style="font-family:${DISPLAY};font-size:52px;line-height:.9;letter-spacing:.01em;text-transform:uppercase;color:${C.cream};font-weight:700;padding-top:10px">
-        LogoForge
+        Vértice
       </div>
       <div style="font-family:${TEXTO};font-size:14px;line-height:1.5;color:rgba(253,241,215,.72);padding-top:12px">
         ${escapa(producto)}
@@ -204,7 +204,7 @@ export async function enviaClave(destino: string, clave: string, producto: strin
       from: remitente,
       to: [destino],
       ...(respuestas ? { reply_to: respuestas } : {}),
-      subject: `Tu clave de LogoForge — ${producto}`,
+      subject: `Tu clave de Vértice — ${producto}`,
       text: texto,
       html,
     }),

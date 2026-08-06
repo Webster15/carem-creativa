@@ -4,7 +4,7 @@ import { activaEquipo } from "@/lib/plugin/licencias";
 
 /**
  * Canjea una clave en este equipo y devuelve las herramientas que cubre.
- * Lo consume el panel de LogoForge dentro de Illustrator.
+ * Lo consume el panel de Vértice dentro de Illustrator.
  */
 
 const Body = z.object({

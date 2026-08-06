@@ -5,7 +5,7 @@ import { paqueteDe } from "@/lib/plugin/paquetes";
 
 /**
  * Entrega el código firmado de una herramienta, solo a quien la ha comprado.
- * Lo consume el panel de LogoForge dentro de Illustrator.
+ * Lo consume el panel de Vértice dentro de Illustrator.
  */
 
 const Body = z.object({

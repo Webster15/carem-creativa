@@ -1,5 +1,5 @@
 /**
- * LogoForge — integración con Wompi (Bancolombia)
+ * Vértice — integración con Wompi (Bancolombia)
  * ---------------------------------------------------------------
  * Web Checkout por redirección y validación de webhooks.
  *

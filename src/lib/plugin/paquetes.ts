@@ -1,5 +1,5 @@
 /**
- * LogoForge — paquetes firmados de las herramientas de pago
+ * Vértice — paquetes firmados de las herramientas de pago
  * ---------------------------------------------------------------
  * Se importan como módulos JSON en lugar de leerlos del disco: así
  * funcionan en el runtime edge y quedan versionados con el código.

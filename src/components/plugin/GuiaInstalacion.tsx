@@ -54,7 +54,7 @@ function Paso({ n, titulo, children, ilustracion }: PasoProps) {
         </div>
 
         {ilustracion && (
-          <div className="md:pt-2 self-start">{ilustracion}</div>
+          <div className="md:pt-2 seVT-start">{ilustracion}</div>
         )}
       </div>
     </li>
@@ -127,12 +127,12 @@ export function GuiaInstalacion({ conTitulo = true }: { conTitulo?: boolean }) {
 
           <div className="flex flex-wrap gap-3 pt-2">
             <a
-              href="/descargas/LogoForge.zxp"
+              href="/descargas/Vertice.zxp"
               download
               className="inline-flex items-center gap-2 bg-accent text-cream font-display text-sm px-6 py-3.5 tracking-[0.12em] uppercase hover:bg-dark transition-colors"
             >
               <Download className="h-4 w-4" />
-              LogoForge.zxp
+              Vertice.zxp
             </a>
             <a
               href={ZXP_INSTALLER}
@@ -175,12 +175,12 @@ export function GuiaInstalacion({ conTitulo = true }: { conTitulo?: boolean }) {
           </p>
         </Paso>
 
-        <Paso n={4} titulo="Abre LogoForge.zxp con el instalador" ilustracion={<IlusSoltarZxp />}>
+        <Paso n={4} titulo="Abre Vertice.zxp con el instalador" ilustracion={<IlusSoltarZxp />}>
           <p>Aquí cambia según el sistema:</p>
           <div className="space-y-2 pt-1">
             <Sistema icono={Monitor} nombre="Windows">
               haz <strong className="text-dark">doble clic</strong> sobre el archivo{" "}
-              <code className="font-mono text-dark">LogoForge.zxp</code> que descargaste.
+              <code className="font-mono text-dark">Vertice.zxp</code> que descargaste.
             </Sistema>
             <Sistema icono={Apple} nombre="macOS">
               abre el instalador y{" "}
@@ -192,9 +192,9 @@ export function GuiaInstalacion({ conTitulo = true }: { conTitulo?: boolean }) {
 
         <Paso n={5} titulo="Abre Illustrator y busca el panel" ilustracion={<IlusMenu />}>
           <p>
-            Ve a <strong className="text-dark">Ventana › Extensiones › LogoForge</strong>. Si
+            Ve a <strong className="text-dark">Ventana › Extensiones › Vértice</strong>. Si
             tienes Illustrator en inglés, la ruta es{" "}
-            <strong className="text-dark">Window › Extensions › LogoForge</strong>.
+            <strong className="text-dark">Window › Extensions › Vértice</strong>.
           </p>
           <p>
             El panel aparece acoplado como cualquier otro de Illustrator: puedes moverlo,
@@ -234,7 +234,7 @@ export function GuiaInstalacion({ conTitulo = true }: { conTitulo?: boolean }) {
             <p>
               En <strong className="text-dark">«¿Ya tienes una clave?»</strong> pega la clave
               que te llegó por correo. Tiene la forma{" "}
-              <code className="font-mono text-dark">LF-XXXX-XXXX-XXXX</code>.
+              <code className="font-mono text-dark">VT-XXXX-XXXX-XXXX</code>.
             </p>
             <p>
               Las herramientas se descargan solas y quedan desbloqueadas. No hay que

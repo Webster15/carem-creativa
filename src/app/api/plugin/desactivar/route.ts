@@ -4,7 +4,7 @@ import { desactivaEquipo } from "@/lib/plugin/licencias";
 
 /**
  * Libera la plaza de este equipo para poder usar la clave en otro.
- * Lo consume el panel de LogoForge dentro de Illustrator.
+ * Lo consume el panel de Vértice dentro de Illustrator.
  */
 
 const Body = z.object({

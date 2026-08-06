@@ -1,5 +1,5 @@
 /**
- * LogoForge — catálogo y precios
+ * Vértice — catálogo y precios
  * ---------------------------------------------------------------
  * Los precios se definen en USD, pero Wompi solo liquida en pesos
  * colombianos, así que hay que convertir en cada compra.
