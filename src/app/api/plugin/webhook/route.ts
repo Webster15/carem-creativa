@@ -8,7 +8,9 @@ import { enviaClave } from "@/lib/plugin/correo";
  * Webhook de Wompi. Al aprobarse un pago se emite la licencia y se envía
  * la clave por correo.
  *
- * Runtime Node (no edge) porque nodemailer necesita Node para el SMTP.
+ * Runtime Node (no edge). El correo ya no lo ata —se envía por HTTP a la API
+ * de Resend—, pero la validación del checksum de Wompi sigue usando el crypto
+ * de Node, así que se queda aquí.
  *
  * CÓDIGOS DE RESPUESTA
  * Wompi reintenta el envío cuando no recibe un 2xx, y de eso depende que no

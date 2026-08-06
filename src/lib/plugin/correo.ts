@@ -1,32 +1,29 @@
 /**
  * LogoForge — envío de la clave de licencia
  * ---------------------------------------------------------------
- * Usa nodemailer, que ya estaba en el proyecto. Requiere runtime Node:
- * el SMTP no funciona en edge.
+ * Usa la API HTTP de Resend en vez de SMTP. Motivos:
+ *
+ *   - Es una sola llamada `fetch`: no hace falta nodemailer ni mantener
+ *     abierta una conexión SMTP, que es justo lo que peor se lleva con las
+ *     funciones serverless de Vercel (se congelan a mitad del saludo TLS).
+ *   - Una variable de entorno (RESEND_API_KEY) en lugar de seis.
+ *   - Funciona igual en runtime edge, por si algún día movemos el webhook.
  *
  * Si el envío falla, la compra NO se pierde: la clave se muestra igualmente
- * en /plugin/gracias, verificada contra la API de Wompi.
+ * en /plugin/gracias, verificada con el token de retorno firmado.
  */
 
-import nodemailer from "nodemailer";
+const API = "https://api.resend.com/emails";
 
-function transporte() {
-  const host = process.env.SMTP_HOST;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  if (!host || !user || !pass) throw new Error("Faltan credenciales SMTP");
-
-  return nodemailer.createTransport({
-    host,
-    port: Number(process.env.SMTP_PORT || 465),
-    secure: String(process.env.SMTP_SECURE ?? "true") === "true",
-    auth: { user, pass },
-  });
-}
+/** Remitente por defecto. El dominio debe estar verificado en Resend. */
+const REMITENTE = "LogoForge <plugins@caremcreativa.com>";
 
 export async function enviaClave(destino: string, clave: string, producto: string) {
-  const remitente = process.env.SMTP_FROM || process.env.SMTP_USER!;
-  const sitio = process.env.SITIO_URL || "https://caremcreativa.com";
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) throw new Error("Falta RESEND_API_KEY");
+
+  const remitente = process.env.CORREO_FROM || REMITENTE;
+  const sitio = process.env.SITIO_URL || "https://www.caremcreativa.com";
 
   const texto = [
     `Tu clave de LogoForge`,
@@ -35,10 +32,10 @@ export async function enviaClave(destino: string, clave: string, producto: strin
     `Clave: ${clave}`,
     ``,
     `Cómo activarla:`,
-    `1. Instala LogoForge en Illustrator (${sitio}/plugin).`,
+    `1. Descarga e instala LogoForge (${sitio}/plugin).`,
     `2. Abre Ventana › Extensiones › LogoForge.`,
-    `3. Pulsa el icono de llave arriba a la derecha.`,
-    `4. Pega la clave y dale a Activar.`,
+    `3. Pulsa el banner azul de abajo, "Consigue tus herramientas".`,
+    `4. Pega la clave en "¿Ya tienes una clave?" y dale a Activar.`,
     ``,
     `La clave sirve para 2 equipos. Puedes liberar uno desde el propio panel`,
     `si cambias de ordenador.`,
@@ -57,10 +54,10 @@ export async function enviaClave(destino: string, clave: string, producto: strin
   </div>
 
   <ol style="font-size:14px;line-height:1.7;padding-left:20px;margin:0 0 24px">
-    <li>Instala LogoForge en Illustrator desde <a href="${sitio}/plugin" style="color:#3D6EEE">${sitio}/plugin</a></li>
+    <li>Descarga e instala LogoForge desde <a href="${sitio}/plugin" style="color:#3D6EEE">${sitio}/plugin</a></li>
     <li>Abre <strong>Ventana › Extensiones › LogoForge</strong></li>
-    <li>Pulsa el icono de llave, arriba a la derecha</li>
-    <li>Pega la clave y dale a <strong>Activar</strong></li>
+    <li>Pulsa el banner azul de abajo, <strong>«Consigue tus herramientas»</strong></li>
+    <li>Pega la clave en <strong>«¿Ya tienes una clave?»</strong> y dale a <strong>Activar</strong></li>
   </ol>
 
   <p style="font-size:13px;color:#666;line-height:1.6;margin:0">
@@ -69,11 +66,26 @@ export async function enviaClave(destino: string, clave: string, producto: strin
   </p>
 </div>`.trim();
 
-  await transporte().sendMail({
-    from: remitente,
-    to: destino,
-    subject: `Tu clave de LogoForge — ${producto}`,
-    text: texto,
-    html,
+  const res = await fetch(API, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: remitente,
+      to: [destino],
+      subject: `Tu clave de LogoForge — ${producto}`,
+      text: texto,
+      html,
+    }),
   });
+
+  // El cuerpo del error de Resend dice exactamente qué falla (dominio sin
+  // verificar, clave revocada, destinatario no permitido en modo prueba...).
+  // Sin esto los fallos de envío quedaban como un 500 mudo en los logs.
+  if (!res.ok) {
+    const detalle = await res.text().catch(() => "");
+    throw new Error(`Resend ${res.status}: ${detalle.slice(0, 300)}`);
+  }
 }
