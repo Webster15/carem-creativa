@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Check, Copy, Loader2, XCircle, KeyRound } from "lucide-react";
+import { GuiaInstalacion } from "@/components/plugin/GuiaInstalacion";
 
 type Estado =
   | { fase: "cargando" }
@@ -145,26 +146,7 @@ function Contenido() {
               </p>
             </div>
 
-            <div className="mt-10">
-              <p className="text-cream/50 text-xs uppercase tracking-[0.2em] mb-4">
-                Cómo activarla
-              </p>
-              <ol className="space-y-3">
-                {[
-                  "Instala LogoForge en Illustrator si aún no lo tienes.",
-                  "Abre Ventana › Extensiones › LogoForge.",
-                  "Pulsa el icono de llave, arriba a la derecha del panel.",
-                  "Pega la clave y dale a Activar. Las herramientas se descargan solas.",
-                ].map((t, i) => (
-                  <li key={t} className="flex items-start gap-4">
-                    <span className="font-display text-accent text-xl leading-none shrink-0 w-6">
-                      {i + 1}
-                    </span>
-                    <span className="text-cream/75 text-sm leading-relaxed">{t}</span>
-                  </li>
-                ))}
-              </ol>
-            </div>
+            <GuiaInstalacion />
           </motion.div>
         )}
 

@@ -6,6 +6,7 @@ import {
   ArrowRight, Check, Compass, Grid3x3, Layers, Ruler, QrCode,
   Download, KeyRound, Sparkles, ShieldCheck, Loader2,
 } from "lucide-react";
+import { GuiaInstalacion } from "@/components/plugin/GuiaInstalacion";
 
 // ─── Animaciones (mismas que el resto del sitio) ────────────────────────────
 
@@ -180,10 +181,11 @@ export default function PluginPage() {
               Comprar el pack
             </button>
             <a
-              href="#herramientas"
+              href="#descargar"
               className="inline-flex items-center gap-2 border-2 border-cream/30 text-cream font-display text-sm px-8 py-4 tracking-[0.12em] uppercase hover:border-cream transition-colors"
             >
-              Ver las herramientas
+              <Download className="h-4 w-4" />
+              Descargar gratis
             </a>
           </motion.div>
 
@@ -356,6 +358,35 @@ export default function PluginPage() {
                 </p>
               </div>
             </div>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* ── Descarga e instalación ─────────────────────────────────────── */}
+      <section id="descargar" className="scroll-mt-16 bg-brand w-full border-t border-cream/15">
+        <motion.div
+          variants={stagger}
+          initial="hidden"
+          whileInView="visible"
+          viewport={vp}
+          className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-28"
+        >
+          <motion.p variants={fadeUp} className="text-accent text-xs font-semibold tracking-[0.3em] uppercase">
+            Gratis, sin cuenta
+          </motion.p>
+          <motion.h2
+            variants={fadeUp}
+            className="font-display text-cream leading-[0.88] uppercase mt-2"
+            style={{ fontSize: "clamp(2rem, 6vw, 4rem)" }}
+          >
+            Instala el plugin
+          </motion.h2>
+          <motion.p variants={fadeUp} className="mt-5 max-w-xl text-cream/70 text-base leading-relaxed">
+            Descárgalo e instálalo aunque no compres nada: incluye el generador de
+            códigos QR. Las demás herramientas se desbloquean con tu clave.
+          </motion.p>
+          <motion.div variants={fadeUp}>
+            <GuiaInstalacion />
           </motion.div>
         </motion.div>
       </section>
