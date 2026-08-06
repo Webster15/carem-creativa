@@ -43,11 +43,19 @@ async function sb(ruta: string, init: RequestInit = {}) {
     },
     cache: "no-store",
   });
+  const texto = await res.text();
   if (!res.ok) {
-    const texto = await res.text();
     throw new Error(`Supabase ${res.status}: ${texto.slice(0, 200)}`);
   }
-  return res.status === 204 ? null : res.json();
+  // Una inserción sin `return=representation` responde 201 con cuerpo VACÍO,
+  // no 204. Intentar interpretarlo como JSON lanzaba una excepción y la
+  // activación devolvía 500 aunque el registro se hubiera guardado bien.
+  if (!texto) return null;
+  try {
+    return JSON.parse(texto);
+  } catch {
+    return null;
+  }
 }
 
 // ---------------------------------------------------------------
