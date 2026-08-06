@@ -22,12 +22,21 @@ const vp = { once: true, amount: 0.12 };
 
 // ─── Datos ──────────────────────────────────────────────────────────────────
 
+/**
+ * Los precios se repetían por media página y ya se desincronizaron una vez al
+ * cambiarlos. Aquí viven una sola vez; el importe que se cobra de verdad sale
+ * de lib/plugin/precios.ts, que es el que ve el checkout.
+ */
+const USD_SUELTA = 6;
+const USD_PACK = "11,99";
+const USD_AHORRO = 12;
+
 const HERRAMIENTAS = [
   {
     id: "construccion",
     icono: Compass,
     nombre: "Construcción geométrica",
-    usd: 4,
+    usd: USD_SUELTA,
     texto:
       "Detecta las rectas y circunferencias del propio logo, las prolonga hasta los " +
       "bordes de la mesa y acota los ángulos de inclinación. La retícula que antes " +
@@ -37,7 +46,7 @@ const HERRAMIENTAS = [
     id: "reticula",
     icono: Grid3x3,
     nombre: "Retícula modular",
-    usd: 4,
+    usd: USD_SUELTA,
     texto:
       "Columnas, filas y medianiles sobre la mesa de trabajo, con preajustes clásicos: " +
       "Müller-Brockmann, editorial de 12 columnas, sección áurea, canon de Villard.",
@@ -46,7 +55,7 @@ const HERRAMIENTAS = [
     id: "mesasColor",
     icono: Layers,
     nombre: "Versiones sobre color",
-    usd: 4,
+    usd: USD_SUELTA,
     texto:
       "Una mesa de trabajo por cada color de fondo, con el logo centrado y el nombre " +
       "puesto. Listo para exportar todas las versiones de golpe.",
@@ -55,7 +64,7 @@ const HERRAMIENTAS = [
     id: "areaRespeto",
     icono: Ruler,
     nombre: "Área de respeto",
-    usd: 4,
+    usd: USD_SUELTA,
     texto:
       "El área de seguridad calculada a partir de una medida X tomada del propio logo, " +
       "acotada y justificada. Escalable y replicable, como pide un manual de marca.",
@@ -146,21 +155,23 @@ export default function PluginPage() {
 
           <motion.div variants={fadeUp} className="mt-10 flex flex-wrap items-end gap-x-10 gap-y-6">
             <div>
-              <p className="text-cream/50 text-xs uppercase tracking-[0.2em]">Pack completo</p>
+              <p className="text-accent text-xs font-bold uppercase tracking-[0.2em]">
+                Promoción limitada
+              </p>
               <p
                 className="font-display text-cream leading-none uppercase mt-1"
                 style={{ fontSize: "clamp(2.5rem, 7vw, 4.5rem)" }}
               >
-                $10 USD
+                ${USD_PACK} USD
               </p>
               <p className="text-cream/40 text-xs uppercase tracking-wider mt-1">
-                Pago único · 4 herramientas
+                Las 4 herramientas · te ahorras ${USD_AHORRO}
               </p>
             </div>
             <div>
               <p className="text-cream/50 text-xs uppercase tracking-[0.2em]">Por separado</p>
               <p className="font-display text-cream/60 text-3xl uppercase leading-none mt-1">
-                $4 USD
+                ${USD_SUELTA} USD
               </p>
               <p className="text-cream/40 text-xs uppercase tracking-wider mt-1">Cada una</p>
             </div>
@@ -267,14 +278,15 @@ export default function PluginPage() {
             className="mt-6 flex flex-wrap items-center justify-between gap-6 bg-dark p-6 sm:p-8"
           >
             <div>
-              <p className="text-accent text-xs font-bold uppercase tracking-[0.2em]">
-                Las cuatro juntas
+              <p className="inline-block bg-accent text-cream text-xs font-bold uppercase tracking-[0.2em] px-2 py-1">
+                Promoción limitada
               </p>
-              <p className="font-display text-cream text-3xl uppercase leading-none mt-2">
-                $10 USD
+              <p className="font-display text-cream text-3xl uppercase leading-none mt-3">
+                ${USD_PACK} USD
               </p>
               <p className="text-cream/50 text-sm mt-2">
-                Ahorras $6 y entran las herramientas nuevas que añada al pack.
+                Las cuatro juntas. Te ahorras ${USD_AHORRO} y entran las herramientas
+                nuevas que añada al pack.
               </p>
             </div>
             <button

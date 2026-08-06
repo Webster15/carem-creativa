@@ -52,13 +52,13 @@ export const PRODUCTOS: Record<
   IdProducto,
   { nombre: string; usd: number; herramientas: IdHerramienta[] }
 > = {
-  construccion: { nombre: "Construcción geométrica", usd: 4, herramientas: ["construccion"] },
-  reticula:     { nombre: "Retícula modular",        usd: 4, herramientas: ["reticula"] },
-  mesasColor:   { nombre: "Versiones sobre color",   usd: 4, herramientas: ["mesasColor"] },
-  areaRespeto:  { nombre: "Área de respeto",         usd: 4, herramientas: ["areaRespeto"] },
+  construccion: { nombre: "Construcción geométrica", usd: 6, herramientas: ["construccion"] },
+  reticula:     { nombre: "Retícula modular",        usd: 6, herramientas: ["reticula"] },
+  mesasColor:   { nombre: "Versiones sobre color",   usd: 6, herramientas: ["mesasColor"] },
+  areaRespeto:  { nombre: "Área de respeto",         usd: 6, herramientas: ["areaRespeto"] },
   pack: {
     nombre: "Pack completo",
-    usd: 10,
+    usd: 11.99,
     herramientas: ["construccion", "reticula", "mesasColor", "areaRespeto"],
   },
 };
