@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { tokenRetorno, tokenValido } from "@/lib/plugin/lemonsqueezy";
 import { licenciaDeReferencia } from "@/lib/plugin/licencias";
+import { frena } from "@/lib/plugin/limitador";
 
 /**
  * Recupera la clave de una compra al volver de Lemon Squeezy.
@@ -29,6 +30,11 @@ const Body = z.object({
 export const runtime = "edge";
 
 export async function POST(req: Request) {
+  // La página de gracias consulta hasta 12 veces seguidas mientras espera al
+  // webhook, así que el margen es amplio a propósito.
+  const freno = frena(req, "gracias", 60, 60_000);
+  if (freno) return freno;
+
   let json: unknown;
   try {
     json = await req.json();

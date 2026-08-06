@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { frena } from "@/lib/plugin/limitador";
 import { validaEquipo } from "@/lib/plugin/licencias";
 import { paqueteDe } from "@/lib/plugin/paquetes";
 
@@ -17,6 +18,10 @@ const Body = z.object({
 export const runtime = "edge";
 
 export async function POST(req: Request) {
+  // Se piden pocas veces, solo tras activar o al reinstalar.
+  const freno = frena(req, "herramienta", 20, 60_000);
+  if (freno) return freno;
+
   let json: unknown;
   try {
     json = await req.json();

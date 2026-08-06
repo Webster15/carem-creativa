@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { frena } from "@/lib/plugin/limitador";
 import { desactivaEquipo } from "@/lib/plugin/licencias";
 
 /**
@@ -15,6 +16,10 @@ const Body = z.object({
 export const runtime = "edge";
 
 export async function POST(req: Request) {
+  // Liberar plazas en bucle es la unica forma de abusar de esta.
+  const freno = frena(req, "desactivar", 10, 60_000);
+  if (freno) return freno;
+
   let json: unknown;
   try {
     json = await req.json();

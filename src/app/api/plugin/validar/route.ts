@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { frena } from "@/lib/plugin/limitador";
 import { validaEquipo } from "@/lib/plugin/licencias";
 
 /**
@@ -15,6 +16,10 @@ const Body = z.object({
 export const runtime = "edge";
 
 export async function POST(req: Request) {
+  // El panel la llama sola cada 7 dias: 30 por minuto sobra para uso legitimo.
+  const freno = frena(req, "validar", 30, 60_000);
+  if (freno) return freno;
+
   let json: unknown;
   try {
     json = await req.json();

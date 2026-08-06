@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { esProducto, PRODUCTOS } from "@/lib/plugin/precios";
 import { creaCheckout, nuevaReferencia, tokenRetorno } from "@/lib/plugin/lemonsqueezy";
+import { frena } from "@/lib/plugin/limitador";
 
 /**
  * Arranca una compra y devuelve la URL del checkout de Lemon Squeezy.
@@ -18,6 +19,11 @@ const Body = z.object({
 export const runtime = "edge";
 
 export async function POST(req: Request) {
+  // Cada llamada crea un checkout real en Lemon Squeezy y consume su cuota.
+  // Se deja holgado: alguien indeciso puede pulsar varios productos seguidos.
+  const freno = frena(req, "checkout", 20, 60_000);
+  if (freno) return freno;
+
   let json: unknown;
   try {
     json = await req.json();

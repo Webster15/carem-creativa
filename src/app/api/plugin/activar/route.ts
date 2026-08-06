@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { activaEquipo } from "@/lib/plugin/licencias";
+import { frena } from "@/lib/plugin/limitador";
 
 /**
  * Canjea una clave en este equipo y devuelve las herramientas que cubre.
@@ -15,6 +16,11 @@ const Body = z.object({
 export const runtime = "edge";
 
 export async function POST(req: Request) {
+  // Activar es el endpoint más goloso para probar claves a ciegas. Se frena
+  // antes de leer nada, para que un intento fallido no cueste una consulta.
+  const freno = frena(req, "activar", 10, 60_000);
+  if (freno) return freno;
+
   let json: unknown;
   try {
     json = await req.json();
